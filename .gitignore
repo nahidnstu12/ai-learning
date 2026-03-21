@@ -1,0 +1,15 @@
+.env
+node_modules/
+.DS_Store
+*.log
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Large / local data (keep small samples in git if needed)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
