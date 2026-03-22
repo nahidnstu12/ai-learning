@@ -4,5 +4,14 @@
   "type": "module",
   "scripts": {
     "start": "node index.js"
+  },
+  "version": "1.0.0",
+  "description": "Minimal Node client for Ollama. Use for steps 01+; keep this app thin and put one-off tries under `experiments/`.",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.3.1"
   }
 }
