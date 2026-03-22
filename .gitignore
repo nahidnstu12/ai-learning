@@ -13,3 +13,7 @@ data/raw/*
 !data/raw/.gitkeep
 data/processed/*
 !data/processed/.gitkeep
+
+# Ollama model weights (large; pull locally / in CI)
+models/*
+!models/.gitkeep
