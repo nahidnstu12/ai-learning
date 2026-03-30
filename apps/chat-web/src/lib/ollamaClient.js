@@ -1,4 +1,5 @@
 import axios, { isCancel } from 'axios'
+import { CHAT_CONSTRAINTS } from './chatConstraints'
 
 /**
  * @typedef {{
@@ -44,13 +45,32 @@ if (import.meta.env.DEV) {
 }
 
 function chatOptions() {
-  const np = Number.parseInt(import.meta.env.VITE_CHAT_NUM_PREDICT ?? '512', 10)
+  const npRaw = Number.parseInt(
+    import.meta.env.VITE_CHAT_NUM_PREDICT ?? String(CHAT_CONSTRAINTS.maxReplyTokens),
+    10,
+  )
+  const num_predict = Math.min(
+    Number.isFinite(npRaw) ? npRaw : CHAT_CONSTRAINTS.maxReplyTokens,
+    CHAT_CONSTRAINTS.maxReplyTokens,
+  )
   return {
-    temperature: Number.parseFloat(import.meta.env.VITE_CHAT_TEMPERATURE ?? '0.7'),
-    top_p: Number.parseFloat(import.meta.env.VITE_CHAT_TOP_P ?? '0.9'),
-    top_k: Number.parseInt(import.meta.env.VITE_CHAT_TOP_K ?? '40', 10),
-    repeat_penalty: Number.parseFloat(import.meta.env.VITE_CHAT_REPEAT_PENALTY ?? '1.1'),
-    // num_predict: Number.isFinite(np) ? np : 512,
+    temperature: Math.min(
+      Number.parseFloat(import.meta.env.VITE_CHAT_TEMPERATURE ?? '0.7'),
+      CHAT_CONSTRAINTS.temperatureMax,
+    ),
+    top_p: Math.min(
+      Number.parseFloat(import.meta.env.VITE_CHAT_TOP_P ?? '0.9'),
+      CHAT_CONSTRAINTS.topPMax,
+    ),
+    top_k: Math.min(
+      Number.parseInt(import.meta.env.VITE_CHAT_TOP_K ?? '40', 10),
+      CHAT_CONSTRAINTS.topKMax,
+    ),
+    repeat_penalty: Math.min(
+      Number.parseFloat(import.meta.env.VITE_CHAT_REPEAT_PENALTY ?? '1.1'),
+      CHAT_CONSTRAINTS.repeatPenaltyMax,
+    ),
+    num_predict,
   }
 }
 

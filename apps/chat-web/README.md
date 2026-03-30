@@ -1,18 +1,31 @@
-# React + Vite
+Suppose the final streamed JSON line looks like this (illustrative):
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+{
+  "model": "phi3",
+  "message": { "role": "assistant", "content": "" },
+  "done": true,
+  "prompt_eval_count": 256,
+  "eval_count": 64,
+  "total_duration": 4200000000,
+  "load_duration": 50000000,
+  "prompt_eval_duration": 1200000000,
+  "eval_duration": 2800000000
+}
+Then your metrics ends up roughly:
 
-Currently, two official plugins are available:
+promptEvalCount → 256 (prompt tokens this run)
+evalCount → 64 (generated tokens)
+totalDurationNs → 4.2e9 → 4.2 s server total
+loadDurationNs → 50 ms
+promptEvalDurationNs → 1.2 s prompt phase
+evalDurationNs → 2.8 s generation phase
+Note: those phases don’t have to add up exactly to total_duration; there is other overhead (scheduling, bookkeeping, etc.).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Meanwhile wallMs might be 4500 if the browser waited longer (network, TLS, queuing) than the server’s total_duration.
 
-## React Compiler
+Handy rates (approximate):
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+Output tok/s ≈ eval_count / (eval_duration / 1e9)
+Prompt tok/s ≈ prompt_eval_count / (prompt_eval_duration / 1e9) when duration > 0
 
-Note: This will impact Vite dev & build performances.
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
