@@ -4,6 +4,11 @@ import {
   clipMessagesForApi,
   totalContentChars,
 } from '../../lib/chatConstraints'
+import {
+  CHAT_MODEL_STORAGE_KEY,
+  getConfiguredModelIds,
+  readStoredModel,
+} from '../../lib/modelConfig'
 import { streamChat } from '../../lib/ollamaClient'
 import { SYSTEM_PROMPT } from './systemPrompt'
 import { uid } from './utils'
@@ -21,7 +26,31 @@ export function useChatSession() {
     useState(false)
   const abortRef = useRef(null)
 
-  const model = import.meta.env.VITE_MODEL_CHAT ?? 'phi3'
+  const modelOptions = useMemo(() => getConfiguredModelIds(), [])
+  const [selectedModel, setSelectedModel] = useState(() =>
+    readStoredModel(modelOptions),
+  )
+
+  useEffect(() => {
+    if (modelOptions.includes(selectedModel)) return
+    const next = modelOptions[0]
+    setSelectedModel(next)
+    try {
+      localStorage.setItem(CHAT_MODEL_STORAGE_KEY, next)
+    } catch {
+      /* ignore */
+    }
+  }, [modelOptions, selectedModel])
+
+  const setModel = useCallback((id) => {
+    if (!modelOptions.includes(id)) return
+    setSelectedModel(id)
+    try {
+      localStorage.setItem(CHAT_MODEL_STORAGE_KEY, id)
+    } catch {
+      /* ignore */
+    }
+  }, [modelOptions])
 
   const apiMessages = useMemo(
     () =>
@@ -92,6 +121,7 @@ export function useChatSession() {
       const { fullText, metrics } = await streamChat({
         messages: payload,
         signal: ac.signal,
+        model: selectedModel,
         onChunk: (chunk) => {
           acc += chunk
           setMessages((prev) =>
@@ -142,7 +172,7 @@ export function useChatSession() {
       abortRef.current = null
       setBusy(false)
     }
-  }, [busy, input, messages])
+  }, [busy, input, messages, selectedModel])
 
   const stop = useCallback(() => {
     abortRef.current?.abort()
@@ -184,7 +214,9 @@ export function useChatSession() {
   )
 
   return {
-    model,
+    model: selectedModel,
+    modelOptions,
+    setModel,
     apiMessages,
     contextStats,
     visibleMessages,

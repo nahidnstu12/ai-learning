@@ -79,10 +79,11 @@ function chatOptions() {
  * @param {{ role: string; content: string }[]} p.messages
  * @param {AbortSignal} [p.signal]
  * @param {(chunk: string) => void} p.onChunk
+ * @param {string} [p.model] overrides VITE_MODEL_CHAT
  * @returns {Promise<{ fullText: string; metrics: StreamMetrics }>}
  */
-export async function streamChat({ messages, signal, onChunk }) {
-  const model = import.meta.env.VITE_MODEL_CHAT ?? 'phi3'
+export async function streamChat({ messages, signal, onChunk, model: modelParam }) {
+  const model = modelParam ?? import.meta.env.VITE_MODEL_CHAT ?? 'phi3'
   const url = `${baseURL}/api/chat`
   const body = {
     model,

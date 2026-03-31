@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
+import { getConfiguredModelIds, ollamaHasModel } from '../lib/modelConfig'
 import { checkOllamaHealth } from '../lib/ollamaClient'
 
-const modelEnv = import.meta.env.VITE_MODEL_CHAT ?? ''
+const configuredModels = getConfiguredModelIds()
 
 export default function OllamaStatus() {
   const [state, setState] = useState({ phase: 'loading' })
@@ -11,18 +12,23 @@ export default function OllamaStatus() {
     void (async () => {
       const base = import.meta.env.VITE_OLLAMA_URL ?? '(not set)'
       if (import.meta.env.DEV) {
-        console.info('[ollama] VITE_OLLAMA_URL =', base, '| VITE_MODEL_CHAT =', modelEnv || '(none)')
+        console.info(
+          '[ollama] VITE_OLLAMA_URL =',
+          base,
+          '| models:',
+          configuredModels.join(', ') || '(none)',
+        )
       }
       const result = await checkOllamaHealth({ signal: ac.signal })
       if (result.cancelled) return
       if (result.ok) {
-        const hasModel =
-          !modelEnv ||
-          result.models.some((n) => n === modelEnv || n.startsWith(`${modelEnv}:`))
+        const missing = configuredModels.filter(
+          (id) => !ollamaHasModel(result.models, id),
+        )
         setState({
           phase: 'ok',
           models: result.models,
-          hasModel,
+          missingModels: missing,
         })
         if (import.meta.env.DEV) {
           console.info('[ollama] health OK, models:', result.models.length, result.models)
@@ -52,18 +58,19 @@ export default function OllamaStatus() {
   }
 
   const warn =
-    modelEnv && !state.hasModel
-      ? `Model "${modelEnv}" not in list — run: ollama pull ${modelEnv}`
+    state.missingModels?.length > 0
+      ? `Missing: ${state.missingModels.map((m) => `"${m}"`).join(', ')} — ollama pull ${state.missingModels[0]}`
       : null
 
   return (
     <aside className={`ollama-status ollama-status--ok`} role="status">
       Ollama: <strong>OK</strong> — {state.models.length} model(s) loaded
-      {modelEnv ? (
+      {configuredModels.length ? (
         <>
           {' '}
-          · configured: <code>{modelEnv}</code>
-          {state.hasModel ? ' ✓' : ' ✗'}
+          · chat models:{' '}
+          <code>{configuredModels.join(', ')}</code>
+          {state.missingModels?.length ? ' ✗' : ' ✓'}
         </>
       ) : null}
       {warn ? (

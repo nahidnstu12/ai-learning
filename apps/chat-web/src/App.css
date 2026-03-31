@@ -265,6 +265,22 @@
   font-weight: 500;
 }
 
+.chat__model-select {
+  font: inherit;
+  font-size: 13px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface, #fff);
+  color: var(--text);
+  max-width: 14rem;
+  vertical-align: middle;
+}
+
+.chat__model-select:disabled {
+  opacity: 0.6;
+}
+
 @media (prefers-color-scheme: dark) {
   .chat__meta-warn {
     color: #fbbf24;
@@ -307,11 +323,21 @@
   min-height: 240px;
   max-height: min(60vh, 560px);
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 12px;
   border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--social-bg);
   text-align: left;
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat__transcript {
+    scroll-behavior: auto;
+  }
 }
 
 .chat__empty {

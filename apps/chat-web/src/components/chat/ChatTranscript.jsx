@@ -1,9 +1,76 @@
+import { useCallback, useEffect, useRef } from 'react'
 import { formatNs } from './utils'
 
-/** @param {{ visibleMessages: { id: string; role: string; content: string; streaming?: boolean; meta?: Record<string, unknown> }[] }} p */
-export default function ChatTranscript({ visibleMessages }) {
+const PIN_THRESHOLD_PX = 72
+
+function prefersReducedMotion() {
   return (
-    <div className="chat__transcript" aria-live="polite">
+    typeof window !== 'undefined' &&
+    window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches === true
+  )
+}
+
+/** @param {{ visibleMessages: { id: string; role: string; content: string; streaming?: boolean; meta?: Record<string, unknown> }[]; busy?: boolean }} p */
+export default function ChatTranscript({ visibleMessages, busy = false }) {
+  const containerRef = useRef(null)
+  /** When true, new content keeps the view pinned to the bottom. */
+  const isPinnedRef = useRef(true)
+  const streamScrollRafRef = useRef(0)
+
+  const onScroll = useCallback(() => {
+    const el = containerRef.current
+    if (!el) return
+    const fromBottom = el.scrollHeight - el.scrollTop - el.clientHeight
+    isPinnedRef.current = fromBottom <= PIN_THRESHOLD_PX
+  }, [])
+
+  useEffect(() => {
+    if (busy) isPinnedRef.current = true
+  }, [busy])
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el || !isPinnedRef.current) return
+
+    const reduced = prefersReducedMotion()
+    const behavior = reduced ? 'auto' : 'smooth'
+    const streaming = visibleMessages.some((m) => m.streaming)
+
+    const run = y => {
+      if (!containerRef.current || !isPinnedRef.current) return
+      containerRef.current.scrollTo({ top: y, behavior })
+    }
+
+    if (reduced || !streaming) {
+      run(el.scrollHeight)
+      return undefined
+    }
+
+    if (streamScrollRafRef.current) {
+      cancelAnimationFrame(streamScrollRafRef.current)
+    }
+    streamScrollRafRef.current = requestAnimationFrame(() => {
+      streamScrollRafRef.current = 0
+      const e = containerRef.current
+      if (!e || !isPinnedRef.current) return
+      run(e.scrollHeight)
+    })
+
+    return () => {
+      if (streamScrollRafRef.current) {
+        cancelAnimationFrame(streamScrollRafRef.current)
+        streamScrollRafRef.current = 0
+      }
+    }
+  }, [visibleMessages])
+
+  return (
+    <div
+      ref={containerRef}
+      className="chat__transcript"
+      aria-live="polite"
+      onScroll={onScroll}
+    >
       {visibleMessages.length === 0 ? (
         <p className="chat__empty">Say something below.</p>
       ) : (

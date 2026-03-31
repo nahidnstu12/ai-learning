@@ -3,6 +3,8 @@ import { CHAT_CONSTRAINTS } from '../../lib/chatConstraints'
 /**
  * @param {object} p
  * @param {string} p.model
+ * @param {string[]} [p.modelOptions]
+ * @param {(id: string) => void} [p.onModelChange]
  * @param {{ messageCount: number; userTurns: number; charCount: number }} p.contextStats
  * @param {boolean} p.lastRequestContextClipped
  * @param {() => void} p.onOpenContext
@@ -11,16 +13,36 @@ import { CHAT_CONSTRAINTS } from '../../lib/chatConstraints'
  */
 export default function ChatToolbar({
   model,
+  modelOptions = [],
+  onModelChange,
   contextStats,
   lastRequestContextClipped,
   onOpenContext,
   onClearHistory,
   busy,
 }) {
+  const multi = modelOptions.length > 1 && typeof onModelChange === 'function'
   return (
     <header className="chat__toolbar">
       <div className="chat__meta">
-        <strong>Model</strong> <code>{model}</code>
+        <strong>Model</strong>{' '}
+        {multi ? (
+          <select
+            className="chat__model-select"
+            value={model}
+            onChange={(e) => onModelChange(e.target.value)}
+            disabled={busy}
+            aria-label="Chat model"
+          >
+            {modelOptions.map((id) => (
+              <option key={id} value={id}>
+                {id}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <code>{model}</code>
+        )}
         <span className="chat__meta-sep">·</span>
         <strong>Context</strong> {contextStats.messageCount} msgs to API
         <span className="chat__meta-sep">·</span>

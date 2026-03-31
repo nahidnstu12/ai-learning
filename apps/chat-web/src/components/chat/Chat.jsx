@@ -8,6 +8,8 @@ import { useChatSession } from './useChatSession'
 export default function Chat() {
   const {
     model,
+    modelOptions,
+    setModel,
     apiMessages,
     contextStats,
     visibleMessages,
@@ -30,6 +32,8 @@ export default function Chat() {
     <div className="chat">
       <ChatToolbar
         model={model}
+        modelOptions={modelOptions}
+        onModelChange={setModel}
         contextStats={contextStats}
         lastRequestContextClipped={lastRequestContextClipped}
         onOpenContext={() => setHistoryOpen(true)}
@@ -46,7 +50,7 @@ export default function Chat() {
         onCopyJson={copyJson}
       />
 
-      <ChatTranscript visibleMessages={visibleMessages} />
+      <ChatTranscript visibleMessages={visibleMessages} busy={busy} />
 
       {error ? (
         <div className="chat__error" role="alert">
