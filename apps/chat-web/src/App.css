@@ -375,12 +375,63 @@
   opacity: 0.95;
 }
 
+.chat__row--pinned .chat__bubble {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-border, #888) 45%, transparent);
+}
+
+.chat__role-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
 .chat__role {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   opacity: 0.65;
-  margin-bottom: 6px;
+}
+
+.chat__pin-badge {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  opacity: 0.95;
+  color: #92400e;
+}
+
+@media (prefers-color-scheme: dark) {
+  .chat__pin-badge {
+    color: #fbbf24;
+  }
+}
+
+.chat__pin-btn {
+  font: inherit;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.chat__pin-btn:hover {
+  filter: brightness(0.97);
+}
+
+.chat__pin-btn[aria-pressed='true'] {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
 }
 
 .chat__text {
@@ -470,18 +521,22 @@
 }
 
 .chat__modal {
-  width: min(640px, 100%);
-  max-height: min(85vh, 720px);
+  width: min(960px, calc(100vw - 32px));
+  max-height: min(92vh, 920px);
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 16px 18px;
+  padding: 20px 22px;
   border-radius: 12px;
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--text-h);
   box-shadow: var(--shadow);
   text-align: left;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .chat__modal-head {
@@ -540,6 +595,26 @@
   min-height: 0;
 }
 
+/* Pipeline log: explicit min-height — flex:1 on <ul> was collapsing when the section had no fixed height */
+.chat__modal-section--pipeline-log {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.chat__modal-section--pipeline-log > .chat__modal-section-head,
+.chat__modal-section--pipeline-log > .chat__modal-hint {
+  flex-shrink: 0;
+}
+
+.chat__modal-section--pipeline-log > .chat__modal-list.chat__modal-list--log {
+  flex-shrink: 0;
+  min-height: max(280px, 38vh);
+  max-height: min(62vh, 640px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
 .chat__modal-section-head {
   display: flex;
   align-items: center;
@@ -566,9 +641,36 @@
   font-size: 11px;
   line-height: 1.45;
   overflow: auto;
-  max-height: 220px;
+  max-height: min(48vh, 400px);
   white-space: pre-wrap;
   word-break: break-word;
+}
+
+.chat__modal-pre--compact {
+  max-height: min(36vh, 300px);
+}
+
+.chat__modal-pin {
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0.04em;
+  opacity: 0.85;
+}
+
+/* Fallback when not inside --pipeline-log (shouldn't happen) */
+.chat__modal-list--log {
+  min-height: max(280px, 38vh);
+  max-height: min(62vh, 640px);
+}
+
+.chat__modal-log-item {
+  padding: 8px 10px;
+}
+
+.chat__modal-log-body {
+  font-size: 13px;
+  line-height: 1.45;
+  opacity: 0.92;
 }
 
 .chat__modal-empty {
@@ -584,7 +686,7 @@
   border: 1px solid var(--border);
   border-radius: 8px;
   overflow-y: auto;
-  max-height: min(40vh, 320px);
+  max-height: min(52vh, 520px);
   background: var(--social-bg);
 }
 

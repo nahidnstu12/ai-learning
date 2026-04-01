@@ -50,7 +50,7 @@ export default function ChatToolbar({
         <span className="chat__meta-sep">·</span>
         ~{contextStats.charCount.toLocaleString()} chars
         <span className="chat__meta-sep">·</span>
-        cap {CHAT_CONSTRAINTS.maxContextChars.toLocaleString()} ctx /{' '}
+        cap ~{CHAT_CONSTRAINTS.maxContextTokenBudget.toLocaleString()} tok ctx /{' '}
         {CHAT_CONSTRAINTS.maxUserMessageChars.toLocaleString()} msg /{' '}
         {CHAT_CONSTRAINTS.maxReplyTokens} tok out
         {lastRequestContextClipped ? (

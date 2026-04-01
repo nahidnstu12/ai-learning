@@ -21,9 +21,11 @@ export default function Chat() {
     setHistoryOpen,
     lastSentPayload,
     lastRequestContextClipped,
+    lastPipelineReport,
     send,
     stop,
     clearHistory,
+    togglePin,
     copyJson,
     onComposerKeyDown,
   } = useChatSession()
@@ -47,10 +49,15 @@ export default function Chat() {
         lastSentPayload={lastSentPayload}
         apiMessages={apiMessages}
         lastRequestContextClipped={lastRequestContextClipped}
+        lastPipelineReport={lastPipelineReport}
         onCopyJson={copyJson}
       />
 
-      <ChatTranscript visibleMessages={visibleMessages} busy={busy} />
+      <ChatTranscript
+        visibleMessages={visibleMessages}
+        busy={busy}
+        onTogglePin={togglePin}
+      />
 
       {error ? (
         <div className="chat__error" role="alert">

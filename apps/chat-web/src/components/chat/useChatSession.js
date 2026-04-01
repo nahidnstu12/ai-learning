@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import {
-  CHAT_CONSTRAINTS,
-  clipMessagesForApi,
-  totalContentChars,
-} from '../../lib/chatConstraints'
+import { buildApiPayload } from '../../lib/buildApiPayload'
+import { CHAT_CONSTRAINTS } from '../../lib/chatConstraints'
+import { maybeAssistantContextContentFields } from '../../lib/assistantContextCompress'
+import { clearPipelineLog } from '../../lib/contextPipelineLog'
 import {
   CHAT_MODEL_STORAGE_KEY,
   getConfiguredModelIds,
@@ -24,6 +23,7 @@ export function useChatSession() {
   const [lastSentPayload, setLastSentPayload] = useState(null)
   const [lastRequestContextClipped, setLastRequestContextClipped] =
     useState(false)
+  const [lastPipelineReport, setLastPipelineReport] = useState(null)
   const abortRef = useRef(null)
 
   const modelOptions = useMemo(() => getConfiguredModelIds(), [])
@@ -56,7 +56,11 @@ export function useChatSession() {
     () =>
       messages
         .filter((m) => !m.streaming)
-        .map(({ role, content }) => ({ role, content })),
+        .map(({ role, content, pinned }) => ({
+          role,
+          content,
+          pinned: !!pinned,
+        })),
     [messages],
   )
 
@@ -102,19 +106,28 @@ export function useChatSession() {
     const ac = new AbortController()
     abortRef.current = ac
 
-    const rawPayload = [
-      ...messages
-        .filter((m) => !m.streaming)
-        .map(({ role, content }) => ({ role, content })),
-      { role: 'user', content: text },
-    ]
-    const rawChars = totalContentChars(rawPayload)
-    const payload = clipMessagesForApi(
-      rawPayload,
-      CHAT_CONSTRAINTS.maxContextChars,
-    )
+    const internalMessages = messages
+      .filter((m) => !m.streaming)
+      .map((m) => ({
+        id: m.id,
+        role: m.role,
+        content: m.content,
+        pinned: !!m.pinned,
+        contextContent: m.contextContent,
+      }))
+
+    const {
+      messages: payload,
+      clipped,
+      meta: pipelineMeta,
+    } = buildApiPayload({
+      internalMessages,
+      newUser: { id: userId, content: text },
+      constraints: CHAT_CONSTRAINTS,
+    })
     setLastSentPayload(payload)
-    setLastRequestContextClipped(totalContentChars(payload) < rawChars)
+    setLastRequestContextClipped(clipped)
+    setLastPipelineReport(pipelineMeta.report)
 
     let acc = ''
     try {
@@ -139,6 +152,7 @@ export function useChatSession() {
                 ...m,
                 content: fullText,
                 streaming: false,
+                ...maybeAssistantContextContentFields(fullText),
                 meta: {
                   wallMs: metrics.wallMs,
                   promptEvalCount: metrics.promptEvalCount,
@@ -167,6 +181,7 @@ export function useChatSession() {
       } else {
         setError(e?.message ?? String(e))
         setMessages((prev) => prev.filter((m) => m.id !== asstId))
+        setLastPipelineReport(null)
       }
     } finally {
       abortRef.current = null
@@ -178,11 +193,19 @@ export function useChatSession() {
     abortRef.current?.abort()
   }, [])
 
+  const togglePin = useCallback((id) => {
+    setMessages((prev) =>
+      prev.map((m) => (m.id === id ? { ...m, pinned: !m.pinned } : m)),
+    )
+  }, [])
+
   const clearHistory = useCallback(() => {
     if (busy) abortRef.current?.abort()
     setMessages([{ id: uid(), role: 'system', content: SYSTEM_PROMPT }])
     setLastSentPayload(null)
     setLastRequestContextClipped(false)
+    setLastPipelineReport(null)
+    clearPipelineLog()
     setError(null)
   }, [busy])
 
@@ -228,9 +251,11 @@ export function useChatSession() {
     setHistoryOpen,
     lastSentPayload,
     lastRequestContextClipped,
+    lastPipelineReport,
     send,
     stop,
     clearHistory,
+    togglePin,
     copyJson,
     onComposerKeyDown,
   }

@@ -5,15 +5,32 @@
  * | Constraint            | File           | Effect |
  * |----------------------|----------------|--------|
  * | maxUserMessageChars  | Chat.jsx       | Blocks send; `maxLength` on textarea |
- * | maxContextChars      | Chat.jsx       | Drops oldest turns (after system) so API payload fits |
+ * | maxContextTokenBudget| buildApiPayload | Est. token budget + scored turn eviction |
+ * | maxContextChars      | (legacy / fallback) | Still exported; pipeline prefers tokens |
  * | maxReplyTokens       | ollamaClient.js| `options.num_predict` ceiling |
  * | temperatureMax, etc. | ollamaClient.js| Clamps env sampling so it can’t exceed these |
+ *
+ * Tighter context (simulate small windows / prod caps): `VITE_CONTEXT_TOKEN_BUDGET` in `.env`
  */
+
+function resolveContextTokenBudget() {
+  const raw = import.meta.env.VITE_CONTEXT_TOKEN_BUDGET
+  if (raw === undefined || raw === '') return 8192
+  const n = Number.parseInt(String(raw), 10)
+  if (!Number.isFinite(n) || n < 256) return 8192
+  return Math.min(n, 500_000)
+}
 
 export const CHAT_CONSTRAINTS = {
   maxUserMessageChars: 12_000,
   maxContextChars: 48_000,
+  /** Est. prompt token budget for `buildApiPayload` (chars÷4 heuristic). Override with `VITE_CONTEXT_TOKEN_BUDGET`. */
+  maxContextTokenBudget: resolveContextTokenBudget(),
   maxReplyTokens: 512,
+  /** Assistant replies longer than this get a smaller `contextContent` for API packing. */
+  assistantContextCompressMinChars: 3_500,
+  assistantCompressHeadChars: 450,
+  assistantCompressTailChars: 450,
   temperatureMax: 1.2,
   topPMax: 1,
   topKMax: 128,

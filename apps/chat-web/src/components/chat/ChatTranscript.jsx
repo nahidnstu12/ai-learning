@@ -10,8 +10,12 @@ function prefersReducedMotion() {
   )
 }
 
-/** @param {{ visibleMessages: { id: string; role: string; content: string; streaming?: boolean; meta?: Record<string, unknown> }[]; busy?: boolean }} p */
-export default function ChatTranscript({ visibleMessages, busy = false }) {
+/** @param {{ visibleMessages: { id: string; role: string; content: string; streaming?: boolean; pinned?: boolean; meta?: Record<string, unknown> }[]; busy?: boolean; onTogglePin?: (id: string) => void }} p */
+export default function ChatTranscript({
+  visibleMessages,
+  busy = false,
+  onTogglePin,
+}) {
   const containerRef = useRef(null)
   /** When true, new content keeps the view pinned to the bottom. */
   const isPinnedRef = useRef(true)
@@ -77,11 +81,30 @@ export default function ChatTranscript({ visibleMessages, busy = false }) {
         visibleMessages.map((m) => (
           <div
             key={m.id}
-            className={`chat__row chat__row--${m.role}${m.streaming ? ' chat__row--streaming' : ''}`}
+            className={`chat__row chat__row--${m.role}${m.streaming ? ' chat__row--streaming' : ''}${m.pinned ? ' chat__row--pinned' : ''}`}
           >
             <div className="chat__bubble">
-              <div className="chat__role">
-                {m.role === 'user' ? 'You' : 'Assistant'}
+              <div className="chat__role-row">
+                <div className="chat__role">
+                  {m.role === 'user' ? 'You' : 'Assistant'}
+                  {m.pinned ? (
+                    <span className="chat__pin-badge" title="Pinned for API context">
+                      pinned
+                    </span>
+                  ) : null}
+                </div>
+                {!m.streaming && typeof onTogglePin === 'function' ? (
+                  <button
+                    type="button"
+                    className="chat__pin-btn"
+                    onClick={() => onTogglePin(m.id)}
+                    aria-pressed={!!m.pinned}
+                    aria-label={m.pinned ? 'Unpin message' : 'Pin message for context'}
+                    title={m.pinned ? 'Unpin' : 'Pin (kept when context is trimmed)'}
+                  >
+                    {m.pinned ? 'Unpin' : 'Pin'}
+                  </button>
+                ) : null}
               </div>
               <div className="chat__text">{m.content || (m.streaming ? '…' : '')}</div>
               {m.role === 'assistant' && !m.streaming && m.meta && (
