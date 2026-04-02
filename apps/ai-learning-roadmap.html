@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f6f7fb">
+<title>AI Learning Roadmap — JS Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    color-scheme: light;
+    --bg: #f6f7fb;
+    --surface: #ffffff;
+    --surface-elevated: #fafbfe;
+    --border: #e1e5ee;
+    --border-strong: #cfd7e6;
+    --accent: #15803d;
+    --accent-bright: #22c55e;
+    --accent2: #0369a1;
+    --accent3: #c2410c;
+    --accent4: #be185d;
+    --accent5: #7c3aed;
+    --text: #0f172a;
+    --muted: #64748b;
+    --subtitle: #5c6b82;
+    --card: #ffffff;
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-spring: cubic-bezier(0.34, 1.2, 0.64, 1);
+    --radius: 10px;
+    --shadow: 0 4px 24px -8px rgba(15, 23, 42, 0.1), 0 2px 8px -4px rgba(15, 23, 42, 0.06);
+    --shadow-hover: 0 12px 32px -12px rgba(15, 23, 42, 0.14);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    background-color: var(--bg);
+    background-image:
+      radial-gradient(ellipse 120% 90% at 0% -25%, rgba(34, 197, 94, 0.1), transparent 55%),
+      radial-gradient(ellipse 100% 70% at 100% 0%, rgba(14, 165, 233, 0.09), transparent 50%),
+      radial-gradient(ellipse 80% 50% at 50% 100%, rgba(139, 92, 246, 0.07), transparent 45%);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Subtle paper texture on white */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.45;
+    mix-blend-mode: multiply;
+  }
+
+  header {
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Same horizontal rhythm as <main> — fixes title vs phases misalignment */
+  .header-shell {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 56px 40px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header-shell::after {
+    content: 'AI ROADMAP';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    transform-origin: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: color-mix(in srgb, var(--muted) 55%, transparent);
+    letter-spacing: 5px;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .header-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--accent-bright);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .header-tag::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--accent-bright);
+  }
+
+  h1 {
+    font-size: clamp(32px, 5vw, 62px);
+    font-weight: 800;
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+    max-width: 720px;
+  }
+
+  h1 span {
+    color: var(--accent-bright);
+    text-shadow: none;
+  }
+
+  .subtitle {
+    margin-top: 20px;
+    color: var(--subtitle);
+    font-size: 14px;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    max-width: 42rem;
+    line-height: 1.75;
+  }
+
+  .stats-bar {
+    display: flex;
+    gap: clamp(28px, 5vw, 40px);
+    margin-top: 32px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .stat-num {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--accent-bright);
+    letter-spacing: -1px;
+  }
+
+  .stat-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  main {
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* PHASE CARDS */
+  .phases {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .phase {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.35s var(--ease-out), box-shadow 0.45s var(--ease-out), transform 0.35s var(--ease-out);
+    box-shadow: var(--shadow);
+  }
+
+  .phase:hover {
+    border-color: var(--border-strong);
+  }
+
+  .phase.active {
+    border-color: color-mix(in srgb, var(--phase-color, var(--accent-bright)) 55%, var(--border));
+    box-shadow:
+      var(--shadow-hover),
+      0 0 0 1px color-mix(in srgb, var(--phase-color, var(--accent-bright)) 28%, transparent),
+      0 0 40px -10px color-mix(in srgb, var(--phase-color, var(--accent-bright)) 22%, transparent);
+  }
+
+  .phase-header {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    align-items: center;
+    gap: 20px;
+    padding: 18px 22px;
+    user-select: none;
+    cursor: pointer;
+    transition: background 0.3s var(--ease-out);
+    list-style: none;
+  }
+
+  .phase-header:hover {
+    background: rgba(15, 23, 42, 0.03);
+  }
+
+  .phase-header:focus {
+    outline: none;
+  }
+
+  .phase-header:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--phase-color, var(--accent-bright)) 65%, var(--text));
+    outline-offset: 2px;
+  }
+
+  .phase-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+
+  .phase-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .phase-name {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .phase-desc {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .phase-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .duration-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+
+  .chevron {
+    width: 20px;
+    height: 20px;
+    color: var(--muted);
+    transition: transform 0.45s var(--ease-spring), color 0.25s ease;
+    flex-shrink: 0;
+  }
+
+  .phase.active .chevron {
+    transform: rotate(180deg);
+    color: color-mix(in srgb, var(--phase-color, var(--accent-bright)) 75%, var(--muted));
+  }
+
+  /* Smooth height: grid 0fr → 1fr */
+  .phase-body {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.5s var(--ease-out);
+    border-top: 1px solid transparent;
+  }
+
+  .phase.active .phase-body {
+    grid-template-rows: 1fr;
+    border-top-color: var(--border);
+  }
+
+  .phase-body-inner {
+    overflow: hidden;
+    min-height: 0;
+    padding: 0 22px 22px;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition:
+      opacity 0.4s var(--ease-out) 0.05s,
+      transform 0.45s var(--ease-out) 0.05s;
+  }
+
+  .phase.active .phase-body-inner {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .phase-body-inner {
+      transition: none;
+      transform: none;
+    }
+    .phase.active .phase-body-inner { opacity: 1; }
+  }
+
+  .topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .topic-card {
+    background: linear-gradient(180deg, var(--surface) 0%, var(--surface-elevated) 100%);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 16px 16px 18px;
+    position: relative;
+    transition: border-color 0.35s var(--ease-out), transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  }
+
+  .topic-card:hover {
+    border-color: color-mix(in srgb, var(--phase-color, var(--accent-bright)) 40%, var(--border));
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .topic-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--phase-color, var(--accent-bright));
+    border-radius: 4px 0 0 4px;
+  }
+
+  .topic-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    padding-left: 10px;
+  }
+
+  .topic-detail {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.7;
+    padding-left: 10px;
+  }
+
+  .topic-detail code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    padding: 0.12em 0.35em;
+    border-radius: 3px;
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .topic-detail strong {
+    font-weight: 600;
+    color: color-mix(in srgb, var(--text) 88%, var(--muted));
+  }
+
+  .phase-project .project-desc em {
+    font-style: italic;
+    color: var(--muted);
+  }
+
+  .topic-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 10px;
+    padding-left: 10px;
+  }
+
+  .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    letter-spacing: 0.5px;
+  }
+
+  .tag.tag-built {
+    background: color-mix(in srgb, var(--accent-bright) 12%, var(--surface-elevated));
+    border-color: color-mix(in srgb, var(--accent-bright) 42%, var(--border));
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .phase-project {
+    margin-top: 20px;
+    padding: 18px 20px;
+    background: color-mix(in srgb, var(--surface-elevated) 88%, var(--phase-color, var(--accent-bright)) 12%);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--phase-color, var(--accent-bright));
+    border-radius: 0 8px 8px 0;
+    box-shadow: 0 4px 16px -8px rgba(15, 23, 42, 0.08);
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .project-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .project-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--phase-color, var(--accent-bright));
+    margin-bottom: 4px;
+  }
+
+  .project-name {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .project-desc {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* DOCKER SECTION */
+  .docker-section {
+    margin-top: 50px;
+  }
+
+  .docker-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: border-color 0.3s var(--ease-out);
+  }
+
+  .docker-card:hover {
+    border-color: color-mix(in srgb, var(--accent2) 35%, var(--border));
+  }
+
+  .docker-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .docker-icon {
+    width: 36px;
+    height: 36px;
+    background: color-mix(in srgb, #0ea5e9 12%, var(--surface));
+    border: 1px solid color-mix(in srgb, #0ea5e9 28%, var(--border));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .docker-title { font-size: 17px; font-weight: 700; }
+  .docker-sub { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); }
+
+  .docker-body { padding: 20px 24px; }
+
+  .code-block {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 16px 18px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: #86efac;
+    line-height: 1.8;
+    overflow-x: auto;
+    margin-bottom: 14px;
+    position: relative;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  .code-block .comment { color: #94a3b8; }
+  .code-block .cmd { color: #7dd3fc; }
+  .code-block .flag { color: #fdba74; }
+  .code-block .str { color: #f9a8d4; }
+
+  .copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #1e293b;
+    border: 1px solid #475569;
+    color: #cbd5e1;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    padding: 3px 8px;
+    border-radius: 2px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+
+  .copy-btn:hover {
+    color: #86efac;
+    border-color: #64748b;
+    background: #334155;
+  }
+
+  .copy-btn:focus-visible {
+    outline: 2px solid #38bdf8;
+    outline-offset: 2px;
+  }
+
+  /* STACK TABLE */
+  .stack-section { margin-top: 50px; }
+
+  .stack-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .stack-table th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stack-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    vertical-align: top;
+  }
+
+  .stack-table tr:last-child td { border-bottom: none; }
+  .stack-table tbody tr {
+    transition: background 0.25s var(--ease-out);
+  }
+  .stack-table tbody tr:hover td {
+    background: color-mix(in srgb, var(--surface-elevated) 75%, rgba(14, 165, 233, 0.12));
+  }
+
+  .stack-table .mono {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--accent2);
+    font-weight: 500;
+  }
+
+  .stack-table .purpose {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  /* Timeline path */
+  .timeline-connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 22px;
+    color: color-mix(in srgb, var(--muted) 70%, transparent);
+    font-size: 13px;
+    user-select: none;
+    letter-spacing: 0.08em;
+    opacity: 0.85;
+    transition: opacity 0.3s ease, color 0.3s ease;
+  }
+
+  .phases:hover .timeline-connector {
+    opacity: 1;
+    color: var(--muted);
+  }
+
+  footer {
+    margin: 60px 40px 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .footer-note {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  @media (max-width: 640px) {
+    .header-shell { padding: 32px 20px 28px; }
+    .header-shell::after { display: none; }
+    main { padding: 24px 20px; }
+    .phase-header { grid-template-columns: 40px 1fr; }
+    .phase-right { display: none; }
+    footer { flex-direction: column; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-shell">
+    <div class="header-tag">JS → AI Engineer</div>
+    <h1>Your <span>AI Learning</span><br>Roadmap</h1>
+    <p class="subtitle">Local LLM setup → Agents → Recommender Systems. Depth-first, project-driven.</p>
+    <div class="stats-bar">
+      <div class="stat"><span class="stat-num">6</span><span class="stat-label">Phases</span></div>
+      <!-- <div class="stat"><span class="stat-num">~8</span><span class="stat-label">Months</span></div> -->
+      <div class="stat"><span class="stat-num">5+</span><span class="stat-label">Projects</span></div>
+      <div class="stat"><span class="stat-num">JS</span><span class="stat-label">First Stack</span></div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <div class="section-title">Learning Phases — click to expand</div>
+
+  <div class="phases">
+
+    <!-- PHASE 1 — aligned with docs/scopes/phase1.md -->
+    <div class="phase active" style="--phase-color: #22c55e">
+      <div class="phase-header" onclick="togglePhase(this)" role="button" tabindex="0" aria-expanded="false">
+        <span class="phase-num">01</span>
+        <div class="phase-meta">
+          <span class="phase-name">Phase 1 — Local LLM &amp; clients</span>
+          <span class="phase-desc">Prompt, context, model switching — raw HTTP, no LLM SDKs</span>
+        </div>
+        <div class="phase-right">
+          <span class="duration-badge">Week 1–2</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="phase-body">
+        <div class="phase-body-inner">
+        <div class="topics-grid">
+          <div class="topic-card">
+            <div class="topic-title">Ollama · Docker · HTTP</div>
+            <div class="topic-detail">Local model runtime, stable base URL, first <code>/api/chat</code> calls. Roles &amp; <code>messages[]</code> — not a single prompt string.</div>
+            <div class="topic-tags"><span class="tag">docker</span><span class="tag">ollama</span><span class="tag">fetch</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">chat-cli — baseline REPL</div>
+            <div class="topic-detail">Minimal Node client: multi-turn history, streaming NDJSON, model from env. Proves the API contract before any UI.</div>
+            <div class="topic-tags"><span class="tag tag-built">in repo</span><span class="tag">node</span><span class="tag">streaming</span><span class="tag">apps/chat-cli</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">chat-web — browser lab</div>
+            <div class="topic-detail">Vite + React: live transcript, streaming assistant row, <strong>Abort/stop</strong>. Session talks to providers through a small <strong>API façade</strong> (<code>streamCompletion</code>), not raw <code>fetch</code> in the hook.</div>
+            <div class="topic-tags"><span class="tag tag-built">in repo</span><span class="tag">react</span><span class="tag">vite</span><span class="tag">apps/chat-web</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">API layer &amp; dev proxy</div>
+            <div class="topic-detail"><code>llmRegistry</code>: <strong>routes</strong> (<code>localllm:…</code>, optional <code>groq:…</code>). Vite proxies <code>/ollama</code> → Ollama and <code>/groq</code> → Groq with <strong>Bearer from server env</strong> (safe dev path — key not bundled). <code>normalizeAssistantMeta</code> — one metrics shape in the UI.</div>
+            <div class="topic-tags"><span class="tag tag-built">in repo</span><span class="tag">streamCompletion</span><span class="tag">proxy</span><span class="tag">groq</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">Per-turn metrics</div>
+            <div class="topic-detail"><strong>AssistantCompletionMeta</strong>: provider id, token counts when available, wall time; local LLM adds Ollama timing fields. Same transcript UX for Ollama vs Groq after normalization.</div>
+            <div class="topic-tags"><span class="tag tag-built">in repo</span><span class="tag">observability</span><span class="tag">tokens</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">Routes, models &amp; system persona</div>
+            <div class="topic-detail"><strong>Route picker</strong> (persisted): local models from env + optional Groq. Central <strong>system prompt</strong> — policy stays in the first messages for every provider.</div>
+            <div class="topic-tags"><span class="tag tag-built">in repo</span><span class="tag">prompts</span><span class="tag">localStorage</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">Context pipeline &amp; pins</div>
+            <div class="topic-detail">Before each send: token-ish <strong>budget</strong>, turn grouping, <strong>scored eviction</strong>, <strong>pinned</strong> turns. Long assistant text: <strong>head/tail compression for API only</strong> — full reply stays in the UI.</div>
+            <div class="topic-tags"><span class="tag tag-built">in repo</span><span class="tag">context</span><span class="tag">clipping</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">Pipeline report &amp; constraints</div>
+            <div class="topic-detail">Structured debug: budget, kept vs removed turns, warnings. Single <strong>constraints</strong> module caps message size, reply tokens, sampling — product policy in one place.</div>
+            <div class="topic-tags"><span class="tag tag-built">in repo</span><span class="tag">debug</span><span class="tag">safeguards</span></div>
+          </div>
+        </div>
+        <div class="phase-project">
+          <span class="project-icon">📌</span>
+          <div>
+            <div class="project-label">Phase 1 — what we ship</div>
+            <div class="project-name">chat-cli + chat-web</div>
+            <div class="project-desc"><strong>apps/chat-cli</strong> — thin streaming REPL on Ollama.<br><strong>apps/chat-web</strong> — <code>streamCompletion</code> + route registry (local / optional Groq), Vite dev proxies, normalized completion meta; stream + stop, route picker, interview-coach system prompt, context packing (pins, eviction, optional assistant compression), pipeline report + clipped flag. <em>Deferred:</em> rolling summaries, server-persisted threads, RAG.</div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-connector">↓</div>
+
+    <!-- PHASE 2 -->
+    <div class="phase" style="--phase-color: #7fd4ff">
+      <div class="phase-header" onclick="togglePhase(this)" role="button" tabindex="0" aria-expanded="false">
+        <span class="phase-num">02</span>
+        <div class="phase-meta">
+          <span class="phase-name">LLM Fundamentals</span>
+          <span class="phase-desc">Embeddings, RAG, vector search</span>
+        </div>
+        <div class="phase-right">
+          <span class="duration-badge">Week 3–5</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="phase-body">
+        <div class="phase-body-inner">
+        <div class="topics-grid">
+          <div class="topic-card">
+            <div class="topic-title">Embeddings</div>
+            <div class="topic-detail">Convert text → vectors. Use nomic-embed-text model. Cosine similarity in JS.</div>
+            <div class="topic-tags"><span class="tag">embeddings</span><span class="tag">vectors</span><span class="tag">similarity</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">Vector Databases</div>
+            <div class="topic-detail">Chroma or Qdrant via Docker. Store & search document embeddings. HNSW index concepts.</div>
+            <div class="topic-tags"><span class="tag">chromadb</span><span class="tag">qdrant</span><span class="tag">ANN</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">RAG Pipeline</div>
+            <div class="topic-detail">Retrieval-Augmented Generation. Chunk docs → embed → store → retrieve → prompt. Build from scratch.</div>
+            <div class="topic-tags"><span class="tag">RAG</span><span class="tag">chunking</span><span class="tag">retrieval</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">LangChain.js Basics</div>
+            <div class="topic-detail">Document loaders, text splitters, chains. Use with local Ollama instead of OpenAI.</div>
+            <div class="topic-tags"><span class="tag">langchain</span><span class="tag">chains</span><span class="tag">loaders</span></div>
+          </div>
+        </div>
+        <div class="phase-project">
+          <span class="project-icon">📄</span>
+          <div>
+            <div class="project-label">Phase Project</div>
+            <div class="project-name">PDF Q&A Bot</div>
+            <div class="project-desc">Upload any PDF → chunk → embed → store in Chroma → ask questions, get answers with source citations.</div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-connector">↓</div>
+
+    <!-- PHASE 3 -->
+    <div class="phase" style="--phase-color: #ffb347">
+      <div class="phase-header" onclick="togglePhase(this)" role="button" tabindex="0" aria-expanded="false">
+        <span class="phase-num">03</span>
+        <div class="phase-meta">
+          <span class="phase-name">AI Agents</span>
+          <span class="phase-desc">Tool use, function calling, multi-step reasoning</span>
+        </div>
+        <div class="phase-right">
+          <span class="duration-badge">Week 6–9</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="phase-body">
+        <div class="phase-body-inner">
+        <div class="topics-grid">
+          <div class="topic-card">
+            <div class="topic-title">Tool / Function Calling</div>
+            <div class="topic-detail">Define tools as JSON schema. LLM decides which to call and with what args. Parse structured output.</div>
+            <div class="topic-tags"><span class="tag">tools</span><span class="tag">JSON schema</span><span class="tag">function call</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">ReAct Pattern</div>
+            <div class="topic-detail">Reasoning + Acting loop. Thought → Action → Observation → repeat. Implement in raw JS.</div>
+            <div class="topic-tags"><span class="tag">ReAct</span><span class="tag">reasoning</span><span class="tag">loop</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">Memory Systems</div>
+            <div class="topic-detail">Short-term (conversation buffer), long-term (vector store), episodic memory. When to use each.</div>
+            <div class="topic-tags"><span class="tag">memory</span><span class="tag">context</span><span class="tag">state</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">Multi-Agent Patterns</div>
+            <div class="topic-detail">Orchestrator → worker agents. Planner/executor split. Handoff protocols between agents.</div>
+            <div class="topic-tags"><span class="tag">multi-agent</span><span class="tag">orchestration</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">Structured Outputs</div>
+            <div class="topic-detail">Force JSON responses. Zod validation in JS. Retry loops when output format fails.</div>
+            <div class="topic-tags"><span class="tag">zod</span><span class="tag">JSON</span><span class="tag">validation</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">Agent Frameworks</div>
+            <div class="topic-detail">Vercel AI SDK, LangGraph.js. Compare against hand-rolled agents. Know the tradeoffs.</div>
+            <div class="topic-tags"><span class="tag">vercel AI</span><span class="tag">langgraph</span></div>
+          </div>
+        </div>
+        <div class="phase-project">
+          <span class="project-icon">📅</span>
+          <div>
+            <div class="project-label">Phase Project — Main Goal</div>
+            <div class="project-name">Chat Booking Agent</div>
+            <div class="project-desc">Natural language booking assistant. Tools: check_availability, make_booking, cancel_booking, send_confirmation. Memory of past bookings. Handles multi-turn conversations.</div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-connector">↓</div>
+
+    <!-- PHASE 4 -->
+    <div class="phase" style="--phase-color: #ff7fa3">
+      <div class="phase-header" onclick="togglePhase(this)" role="button" tabindex="0" aria-expanded="false">
+        <span class="phase-num">04</span>
+        <div class="phase-meta">
+          <span class="phase-name">Recommender Systems</span>
+          <span class="phase-desc">Collaborative filtering, content-based, hybrid AI</span>
+        </div>
+        <div class="phase-right">
+          <span class="duration-badge">Week 10–13</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="phase-body">
+        <div class="phase-body-inner">
+        <div class="topics-grid">
+          <div class="topic-card">
+            <div class="topic-title">Collaborative Filtering</div>
+            <div class="topic-detail">User-based & item-based CF. Matrix factorization concepts. Why it breaks with cold start.</div>
+            <div class="topic-tags"><span class="tag">CF</span><span class="tag">matrix</span><span class="tag">cold start</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">Content-Based Filtering</div>
+            <div class="topic-detail">TF-IDF, item feature vectors. Embed item descriptions → cosine similarity. Build with JS.</div>
+            <div class="topic-tags"><span class="tag">TF-IDF</span><span class="tag">embeddings</span><span class="tag">similarity</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">Hybrid Systems</div>
+            <div class="topic-detail">Combine CF + content-based. Weighted blending. When to use LLM vs traditional ML for recs.</div>
+            <div class="topic-tags"><span class="tag">hybrid</span><span class="tag">blending</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">LLM-Powered Recs</div>
+            <div class="topic-detail">Use embeddings for semantic similarity. Conversational recommendation via agent. Explain recommendations in natural language.</div>
+            <div class="topic-tags"><span class="tag">semantic</span><span class="tag">conversational</span></div>
+          </div>
+        </div>
+        <div class="phase-project">
+          <span class="project-icon">🎬</span>
+          <div>
+            <div class="project-label">Phase Project</div>
+            <div class="project-name">AI Recommendation Engine</div>
+            <div class="project-desc">Movie/product recommender. Chat interface: "I liked Inception, what else?" → semantic embed search + CF hybrid + LLM explanation.</div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-connector">↓</div>
+
+    <!-- PHASE 5 -->
+    <div class="phase" style="--phase-color: #c77fff">
+      <div class="phase-header" onclick="togglePhase(this)" role="button" tabindex="0" aria-expanded="false">
+        <span class="phase-num">05</span>
+        <div class="phase-meta">
+          <span class="phase-name">Fine-tuning & Evaluation</span>
+          <span class="phase-desc">Adapt models, measure quality, improve systematically</span>
+        </div>
+        <div class="phase-right">
+          <span class="duration-badge">Week 14–17</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="phase-body">
+        <div class="phase-body-inner">
+        <div class="topics-grid">
+          <div class="topic-card">
+            <div class="topic-title">Evaluation Metrics</div>
+            <div class="topic-detail">BLEU, ROUGE, BERTScore for text. Precision@K for recs. LLM-as-judge pattern.</div>
+            <div class="topic-tags"><span class="tag">evals</span><span class="tag">metrics</span><span class="tag">LLM-judge</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">Dataset Prep</div>
+            <div class="topic-detail">Curate Q&A pairs. Data formatting for fine-tuning. Synthetic data generation with LLM.</div>
+            <div class="topic-tags"><span class="tag">dataset</span><span class="tag">JSONL</span><span class="tag">synthetic</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">LoRA / QLoRA</div>
+            <div class="topic-detail">Low-rank adaptation. Fine-tune small models locally with Ollama + Unsloth. Keep quality, reduce compute.</div>
+            <div class="topic-tags"><span class="tag">LoRA</span><span class="tag">QLoRA</span><span class="tag">unsloth</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">Prompt Optimization</div>
+            <div class="topic-detail">DSPy concepts. Automatic prompt tuning. Measure → iterate → measure loop.</div>
+            <div class="topic-tags"><span class="tag">DSPy</span><span class="tag">optimization</span></div>
+          </div>
+        </div>
+        <div class="phase-project">
+          <span class="project-icon">🔬</span>
+          <div>
+            <div class="project-label">Phase Project</div>
+            <div class="project-name">Eval Dashboard</div>
+            <div class="project-desc">Build a JS dashboard that runs your booking agent through 50 test cases, scores with LLM-as-judge, tracks regression across model versions.</div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-connector">↓</div>
+
+    <!-- PHASE 6 -->
+    <div class="phase" style="--phase-color: #7fff7f">
+      <div class="phase-header" onclick="togglePhase(this)" role="button" tabindex="0" aria-expanded="false">
+        <span class="phase-num">06</span>
+        <div class="phase-meta">
+          <span class="phase-name">Production AI</span>
+          <span class="phase-desc">Deploy, observe, scale your AI systems</span>
+        </div>
+        <div class="phase-right">
+          <span class="duration-badge">Week 18–22</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="phase-body">
+        <div class="phase-body-inner">
+        <div class="topics-grid">
+          <div class="topic-card">
+            <div class="topic-title">AI Observability</div>
+            <div class="topic-detail">Trace LLM calls with Langfuse or Helicone. Log prompts, tokens, latency, cost per call.</div>
+            <div class="topic-tags"><span class="tag">langfuse</span><span class="tag">tracing</span><span class="tag">observability</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">Caching & Rate Limits</div>
+            <div class="topic-detail">Semantic caching (cache similar questions). Redis for exact-match cache. Handle Ollama concurrency.</div>
+            <div class="topic-tags"><span class="tag">caching</span><span class="tag">redis</span><span class="tag">rate limits</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">Streaming & UX</div>
+            <div class="topic-detail">Server-Sent Events from Node.js → React. Progressive rendering. Abort controllers.</div>
+            <div class="topic-tags"><span class="tag">SSE</span><span class="tag">streaming</span><span class="tag">abort</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">Guard Rails & Safety</div>
+            <div class="topic-detail">Input/output validation. Prompt injection defense. Content moderation for production agents.</div>
+            <div class="topic-tags"><span class="tag">guardrails</span><span class="tag">safety</span><span class="tag">injection</span></div>
+          </div>
+        </div>
+        <div class="phase-project">
+          <span class="project-icon">🚀</span>
+          <div>
+            <div class="project-label">Capstone Project</div>
+            <div class="project-name">Full-Stack AI Platform</div>
+            <div class="project-desc">Combine everything: booking agent + recommender + RAG knowledge base + eval dashboard + observability. Ship it with Docker Compose as one stack.</div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- DOCKER SETUP -->
+  <!-- <div class="docker-section">
+    <div class="section-title">Local Setup — Docker + Ollama</div>
+    <div class="docker-card">
+      <div class="docker-header">
+        <div class="docker-icon">🐳</div>
+        <div>
+          <div class="docker-title">Quick Start Stack</div>
+          <div class="docker-sub">docker-compose.yml — Ollama + Chroma + your Node app</div>
+        </div>
+      </div>
+      <div class="docker-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<span class="comment"># docker-compose.yml</span>
+<span class="cmd">services:</span>
+  ollama:
+    image: <span class="str">ollama/ollama</span>
+    ports: [<span class="str">"11434:11434"</span>]
+    volumes: [<span class="str">ollama_data:/root/.ollama</span>]
+
+  chromadb:
+    image: <span class="str">chromadb/chroma</span>
+    ports: [<span class="str">"8000:8000"</span>]
+
+  app:
+    build: <span class="str">.</span>
+    ports: [<span class="str">"3000:3000"</span>]
+    environment:
+      - <span class="str">OLLAMA_BASE_URL=http://ollama:11434</span>
+      - <span class="str">CHROMA_URL=http://chromadb:8000</span>
+    depends_on: [ollama, chromadb]
+
+<span class="cmd">volumes:</span>
+  ollama_data:
+        </div>
+
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<span class="comment"># Pull your first model</span>
+<span class="cmd">docker exec</span> <span class="flag">-it</span> ollama ollama <span class="str">pull llama3</span>
+
+<span class="comment"># Test from JS (Node.js)</span>
+<span class="cmd">const</span> res = <span class="str">await</span> fetch(<span class="str">'http://localhost:11434/api/chat'</span>, {
+  method: <span class="str">'POST'</span>,
+  body: JSON.stringify({
+    model: <span class="str">'llama3'</span>,
+    messages: [{ role: <span class="str">'user'</span>, content: <span class="str">'Hello!'</span> }],
+    stream: <span class="flag">false</span>
+  })
+})
+        </div>
+      </div>
+    </div>
+  </div> -->
+
+  <!-- STACK -->
+  <!-- <div class="stack-section">
+    <div class="section-title">Recommended JS-First Stack</div>
+    <div class="docker-card">
+      <table class="stack-table">
+        <thead>
+          <tr>
+            <th>Layer</th>
+            <th>Tool</th>
+            <th>Why</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>LLM Runtime</td>
+            <td class="mono">Ollama (Docker)</td>
+            <td class="purpose">Run llama3, mistral, phi3 locally. OpenAI-compatible API.</td>
+          </tr>
+          <tr>
+            <td>Vector DB</td>
+            <td class="mono">ChromaDB / Qdrant</td>
+            <td class="purpose">Store embeddings. JS client libs available for both.</td>
+          </tr>
+          <tr>
+            <td>AI Framework</td>
+            <td class="mono">Vercel AI SDK</td>
+            <td class="purpose">Best JS-native experience. Streaming, tool use, structured output.</td>
+          </tr>
+          <tr>
+            <td>Backend</td>
+            <td class="mono">Node.js + Hono/Express</td>
+            <td class="purpose">Handle streaming, SSE, agent loops. Familiar territory.</td>
+          </tr>
+          <tr>
+            <td>Frontend</td>
+            <td class="mono">React + TailwindCSS</td>
+            <td class="purpose">Streaming chat UI. Vercel AI SDK has React hooks built in.</td>
+          </tr>
+          <tr>
+            <td>Observability</td>
+            <td class="mono">Langfuse (self-hosted)</td>
+            <td class="purpose">Trace every LLM call. Open source, runs in Docker.</td>
+          </tr>
+          <tr>
+            <td>Cache / State</td>
+            <td class="mono">Redis (Docker)</td>
+            <td class="purpose">Semantic cache, session state, rate limiting.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div> -->
+
+</main>
+
+<footer>
+  <div class="footer-note">JS → AI Engineer Roadmap · ~22 weeks · Local-first · Project-driven</div>
+  <div class="footer-note">Start with Phase 01 → Ship something each phase</div>
+</footer>
+
+<script>
+  function togglePhase(header) {
+    const phase = header.closest('.phase');
+    if (!phase) return;
+    phase.classList.toggle('active');
+    header.setAttribute(
+      'aria-expanded',
+      phase.classList.contains('active') ? 'true' : 'false',
+    );
+  }
+
+  function syncPhaseAria() {
+    document.querySelectorAll('.phase').forEach((phase) => {
+      const header = phase.querySelector('.phase-header');
+      if (!header) return;
+      header.setAttribute(
+        'aria-expanded',
+        phase.classList.contains('active') ? 'true' : 'false',
+      );
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    syncPhaseAria();
+    document.querySelectorAll('.phase-header').forEach((header) => {
+      header.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          togglePhase(header);
+        }
+      });
+    });
+  });
+
+  function copyCode(btn) {
+    const block = btn.parentElement;
+    const text = block.innerText.replace(/^COPY\s*/i, '').trim();
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'COPIED';
+      setTimeout(() => {
+        btn.textContent = 'COPY';
+      }, 1500);
+    });
+  }
+</script>
+</body>
+</html>

@@ -1,29 +1,31 @@
 {
-  "runId": "1775037498770-0pun4il",
-  "ts": 1775037498770,
+  "runId": "1775125963120-fn7eotx",
+  "ts": 1775125963121,
   "stages": {
     "pin": {
-      "pinnedMessageIds": [
-        "b71c6578-4cbc-46f7-9d1b-945ea743e3c9"
-      ],
-      "pinnedCount": 1
+      "pinnedMessageIds": [],
+      "pinnedCount": 0
     },
     "turns": {
-      "rawTurnCount": 14,
-      "keptTurnCount": 14
+      "rawTurnCount": 4,
+      "keptTurnCount": 1
     },
     "compression": {
       "assistantsEligibleInline": 0,
       "note": "Stored contextContent preferred; else inline heuristic over assistantContextCompressMinChars"
     },
     "tokens": {
-      "budget": 12000,
-      "estimatedBeforeEviction": 5082,
-      "estimatedAfter": 5082
+      "budget": 512,
+      "estimatedBeforeEviction": 1139,
+      "estimatedAfter": 158
     },
     "eviction": {
-      "skipped": true,
-      "reason": "under budget"
+      "removedTurnIds": [
+        "35326a7e-fd07-454c-8639-e173e11d71cd",
+        "94a8c4f0-4780-4180-a7a0-8a1f1bd3221b",
+        "04a32ce9-a11f-450b-ba57-e19238b81288"
+      ],
+      "rounds": 3
     },
     "summary": {
       "status": "skipped",
@@ -32,9 +34,9 @@
     "warnings": []
   },
   "final": {
-    "ollamaMessageCount": 28,
-    "clipped": false,
-    "rawTurnCount": 14,
-    "keptTurnCount": 14
+    "ollamaMessageCount": 2,
+    "clipped": true,
+    "rawTurnCount": 4,
+    "keptTurnCount": 1
   }
 }

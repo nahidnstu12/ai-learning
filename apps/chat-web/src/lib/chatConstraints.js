@@ -8,6 +8,7 @@
  * | maxContextTokenBudget| buildApiPayload | Est. token budget + scored turn eviction |
  * | maxContextChars      | (legacy / fallback) | Still exported; pipeline prefers tokens |
  * | maxReplyTokens       | ollamaClient.js| `options.num_predict` ceiling |
+ * | summaryMaxReplyTokens| summarizeHistory.js + streamCompletion | `VITE_SUMMARY_NUM_PREDICT` (summarizer only) |
  * | temperatureMax, etc. | ollamaClient.js| Clamps env sampling so it can’t exceed these |
  *
  * Tighter context (simulate small windows / prod caps): `VITE_CONTEXT_TOKEN_BUDGET` in `.env`
@@ -21,12 +22,22 @@ function resolveContextTokenBudget() {
   return Math.min(n, 500_000)
 }
 
+function resolveSummaryMaxReplyTokens() {
+  const raw = import.meta.env.VITE_SUMMARY_NUM_PREDICT
+  if (raw === undefined || raw === '') return 1024
+  const n = Number.parseInt(String(raw), 10)
+  if (!Number.isFinite(n) || n < 64) return 1024
+  return Math.min(n, 8192)
+}
+
 export const CHAT_CONSTRAINTS = {
   maxUserMessageChars: 12_000,
   maxContextChars: 48_000,
   /** Est. prompt token budget for `buildApiPayload` (chars÷4 heuristic). Override with `VITE_CONTEXT_TOKEN_BUDGET`. */
   maxContextTokenBudget: resolveContextTokenBudget(),
   maxReplyTokens: 512,
+  /** Max new tokens for the history summarizer call (`streamCompletion` override). */
+  summaryMaxReplyTokens: resolveSummaryMaxReplyTokens(),
   /** Assistant replies longer than this get a smaller `contextContent` for API packing. */
   assistantContextCompressMinChars: 3_500,
   assistantCompressHeadChars: 450,

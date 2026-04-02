@@ -137,8 +137,14 @@ function countInlineCompression(turns) {
  * @param {InternalRow[]} p.internalMessages committed + system; no streaming assistant row for pending reply
  * @param {{ id?: string; content: string }} p.newUser
  * @param {typeof CHAT_CONSTRAINTS} [p.constraints]
+ * @param {boolean} [p.historySummaryApplied] — unpinned history was replaced by one summary message before this run
  */
-export function buildApiPayload({ internalMessages, newUser, constraints = CHAT_CONSTRAINTS }) {
+export function buildApiPayload({
+  internalMessages,
+  newUser,
+  constraints = CHAT_CONSTRAINTS,
+  historySummaryApplied = false,
+}) {
   const runId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
   const budget = tokenBudget(constraints)
 
@@ -228,10 +234,15 @@ export function buildApiPayload({ internalMessages, newUser, constraints = CHAT_
     eviction: rounds
       ? { removedTurnIds, rounds }
       : { skipped: true, reason: 'under budget' },
-    summary: {
-      status: 'skipped',
-      reason: 'Phase 3 rolling summary not implemented',
-    },
+    summary: historySummaryApplied
+      ? {
+          status: 'applied',
+          note: 'Unpinned history folded into one user message; pinned verbatim (contextContent cleared)',
+        }
+      : {
+          status: 'skipped',
+          reason: 'Phase 3 auto rolling summary not implemented',
+        },
     warnings,
   }
 

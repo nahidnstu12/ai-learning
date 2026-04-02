@@ -82,15 +82,26 @@ function chatOptions() {
  * @param {string} [p.model] overrides VITE_MODEL_CHAT
  * @returns {Promise<{ fullText: string; metrics: StreamMetrics }>}
  */
-export async function streamChat({ messages, signal, onChunk, model: modelParam }) {
+export async function streamChat({
+  messages,
+  signal,
+  onChunk,
+  model: modelParam,
+  /** Override `num_predict` (e.g. history summarizer — can exceed chat max). */
+  numPredict,
+} = {}) {
   const model = modelParam ?? import.meta.env.VITE_MODEL_CHAT ?? 'phi3'
   const url = `${baseURL}/api/chat`
+  const options = chatOptions()
+  if (numPredict != null && Number.isFinite(numPredict)) {
+    options.num_predict = Math.min(Math.max(64, numPredict), 8192)
+  }
   const body = {
     model,
     messages,
     stream: true,
     keep_alive: import.meta.env.VITE_OLLAMA_KEEP_ALIVE ?? '5m',
-    options: chatOptions(),
+    options,
   }
 
   const t0 = performance.now()

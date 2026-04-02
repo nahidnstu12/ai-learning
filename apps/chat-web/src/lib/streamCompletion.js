@@ -13,15 +13,23 @@ import { streamChat } from './ollamaClient'
  * @param {{ role: string; content: string }[]} p.messages
  * @param {AbortSignal} [p.signal]
  * @param {(chunk: string) => void} p.onChunk
+ * @param {number} [p.maxReplyTokens] — optional cap for this call (summarizer, etc.)
  * @returns {Promise<{ fullText: string; meta: AssistantCompletionMeta }>}
  */
-export async function streamCompletion({ route, messages, signal, onChunk }) {
+export async function streamCompletion({
+  route,
+  messages,
+  signal,
+  onChunk,
+  maxReplyTokens,
+}) {
   if (route.provider === 'localllm') {
     const { fullText, metrics } = await streamChat({
       messages,
       signal,
       onChunk,
       model: route.model,
+      numPredict: maxReplyTokens,
     })
     return { fullText, meta: normalizeAssistantMeta('localllm', metrics) }
   }
@@ -31,6 +39,7 @@ export async function streamCompletion({ route, messages, signal, onChunk }) {
       signal,
       onChunk,
       model: route.model,
+      maxTokens: maxReplyTokens,
     })
     return { fullText, meta: normalizeAssistantMeta('groq', metrics) }
   }

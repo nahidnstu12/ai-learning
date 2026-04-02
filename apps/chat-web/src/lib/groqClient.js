@@ -38,7 +38,14 @@ function applyUsageToMetrics(metrics, json) {
  * @param {string} p.model
  * @returns {Promise<{ fullText: string; metrics: GroqStreamMetrics }>}
  */
-export async function streamChatGroq({ messages, signal, onChunk, model }) {
+export async function streamChatGroq({
+  messages,
+  signal,
+  onChunk,
+  model,
+  /** Override max output tokens (e.g. summarizer). */
+  maxTokens,
+} = {}) {
   const rawBase = import.meta.env.VITE_GROQ_BASE_URL?.trim() ?? ''
   const base = rawBase.replace(/\/$/, '')
   const url = base ? `${base}/chat/completions` : '/groq/chat/completions'
@@ -66,7 +73,10 @@ export async function streamChatGroq({ messages, signal, onChunk, model }) {
       messages,
       stream: true,
       stream_options: { include_usage: true },
-      max_tokens: CHAT_CONSTRAINTS.maxReplyTokens,
+      max_tokens:
+        maxTokens != null && Number.isFinite(maxTokens)
+          ? Math.min(Math.max(64, maxTokens), 8192)
+          : CHAT_CONSTRAINTS.maxReplyTokens,
       temperature: Number.isFinite(temperature) ? temperature : 0.7,
     }),
     signal,

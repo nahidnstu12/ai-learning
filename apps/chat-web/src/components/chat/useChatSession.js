@@ -9,6 +9,12 @@ import {
   getChatRoutes,
   readStoredRouteId,
 } from '../../lib/llmRegistry'
+import {
+  analyzeHistoryForSummary,
+  buildSummarizedInternalMessages,
+  isHistorySummaryEnabled,
+  summarizeTranscript,
+} from '../../lib/summarizeHistory'
 import { streamCompletion } from '../../lib/streamCompletion'
 import { SYSTEM_PROMPT } from './systemPrompt'
 import { uid } from './utils'
@@ -131,15 +137,73 @@ export function useChatSession() {
         contextContent: m.contextContent,
       }))
 
-    const {
-      messages: payload,
-      clipped,
-      meta: pipelineMeta,
-    } = buildApiPayload({
-      internalMessages,
-      newUser: { id: userId, content: text },
-      constraints: CHAT_CONSTRAINTS,
-    })
+    const newUserArg = { id: userId, content: text }
+
+    let payload
+    let clipped
+    let pipelineMeta
+
+    if (isHistorySummaryEnabled()) {
+      const dry = buildApiPayload({
+        internalMessages,
+        newUser: newUserArg,
+        constraints: CHAT_CONSTRAINTS,
+        historySummaryApplied: false,
+      })
+      const { system, pinnedRows, unpinnedTranscript } =
+        analyzeHistoryForSummary(internalMessages)
+      const overBudget = dry.meta.estTokensBefore > dry.meta.budget
+
+      if (overBudget && unpinnedTranscript) {
+        try {
+          const summaryText = await summarizeTranscript({
+            route: selectedRoute,
+            transcript: unpinnedTranscript,
+            signal: ac.signal,
+          })
+          const pipelineInternal = buildSummarizedInternalMessages({
+            system,
+            summaryText,
+            pinnedRows,
+            newId: () => uid(),
+          })
+          const packed = buildApiPayload({
+            internalMessages: pipelineInternal,
+            newUser: newUserArg,
+            constraints: CHAT_CONSTRAINTS,
+            historySummaryApplied: true,
+          })
+          payload = packed.messages
+          clipped = packed.clipped
+          pipelineMeta = packed.meta
+        } catch (e) {
+          if (e?.name === 'AbortError') {
+            setMessages((prev) => prev.filter((m) => m.id !== asstId))
+            setBusy(false)
+            abortRef.current = null
+            return
+          }
+          setError(e?.message ?? String(e))
+          setMessages((prev) => prev.filter((m) => m.id !== asstId))
+          setBusy(false)
+          abortRef.current = null
+          return
+        }
+      } else {
+        payload = dry.messages
+        clipped = dry.clipped
+        pipelineMeta = dry.meta
+      }
+    } else {
+      const packed = buildApiPayload({
+        internalMessages,
+        newUser: newUserArg,
+        constraints: CHAT_CONSTRAINTS,
+      })
+      payload = packed.messages
+      clipped = packed.clipped
+      pipelineMeta = packed.meta
+    }
     setLastSentPayload(payload)
     setLastRequestContextClipped(clipped)
     setLastPipelineReport(pipelineMeta.report)
