@@ -7,9 +7,9 @@ import { useChatSession } from './useChatSession'
 /** Shell: layout + wires session hook to presentational pieces. */
 export default function Chat() {
   const {
-    model,
-    modelOptions,
-    setModel,
+    routeOptions,
+    selectedRouteId,
+    setRouteId,
     apiMessages,
     contextStats,
     visibleMessages,
@@ -33,9 +33,9 @@ export default function Chat() {
   return (
     <div className="chat">
       <ChatToolbar
-        model={model}
-        modelOptions={modelOptions}
-        onModelChange={setModel}
+        routeOptions={routeOptions}
+        selectedRouteId={selectedRouteId}
+        onRouteChange={setRouteId}
         contextStats={contextStats}
         lastRequestContextClipped={lastRequestContextClipped}
         onOpenContext={() => setHistoryOpen(true)}

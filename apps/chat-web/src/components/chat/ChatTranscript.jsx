@@ -110,21 +110,37 @@ export default function ChatTranscript({
               {m.role === 'assistant' && !m.streaming && m.meta && (
                 <dl className="chat__stats">
                   <div>
+                    <dt>Provider</dt>
+                    <dd>
+                      {m.meta.provider === 'groq'
+                        ? 'Groq'
+                        : m.meta.provider === 'localllm'
+                          ? 'Local (Ollama)'
+                          : m.meta.provider}
+                    </dd>
+                  </div>
+                  <div>
                     <dt>Wall time</dt>
                     <dd>{m.meta.wallMs ?? '—'} ms</dd>
                   </div>
                   <div>
                     <dt>Prompt tokens</dt>
-                    <dd>{m.meta.promptEvalCount ?? '—'}</dd>
+                    <dd>
+                      {m.meta.promptTokens ?? m.meta.promptEvalCount ?? '—'}
+                    </dd>
                   </div>
                   <div>
-                    <dt>Gen tokens</dt>
-                    <dd>{m.meta.evalCount ?? '—'}</dd>
+                    <dt>Completion tokens</dt>
+                    <dd>
+                      {m.meta.completionTokens ?? m.meta.evalCount ?? '—'}
+                    </dd>
                   </div>
-                  <div>
-                    <dt>Ollama total</dt>
-                    <dd>{formatNs(m.meta.totalDurationNs)}</dd>
-                  </div>
+                  {m.meta.serverTiming?.totalDurationNs != null ? (
+                    <div>
+                      <dt>Ollama compute (total)</dt>
+                      <dd>{formatNs(m.meta.serverTiming.totalDurationNs)}</dd>
+                    </div>
+                  ) : null}
                 </dl>
               )}
             </div>

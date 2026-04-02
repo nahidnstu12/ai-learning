@@ -1,11 +1,22 @@
 import { useEffect, useState } from 'react'
+import { getGroqModelId, groqUsesDevProxy } from '../lib/llmRegistry'
 import { getConfiguredModelIds, ollamaHasModel } from '../lib/modelConfig'
 import { checkOllamaHealth } from '../lib/ollamaClient'
 
 const configuredModels = getConfiguredModelIds()
 
+function groqSetupHint() {
+  const groqModel = getGroqModelId()
+  if (!groqModel) return null
+  if (groqUsesDevProxy()) {
+    return 'Groq: dev proxy `/groq` — set GROQ_API_KEY or VITE_GROQ_API_KEY in .env (read by Vite only, not bundled).'
+  }
+  return 'Groq: direct `VITE_GROQ_BASE_URL` — use `VITE_GROQ_API_KEY` (embedded in client; dev/trusted only).'
+}
+
 export default function OllamaStatus() {
   const [state, setState] = useState({ phase: 'loading' })
+  const groqHint = groqSetupHint()
 
   useEffect(() => {
     const ac = new AbortController()
@@ -53,6 +64,12 @@ export default function OllamaStatus() {
       <aside className="ollama-status ollama-status--err" role="alert">
         Ollama: <strong>unreachable</strong> — {state.error}. Is the server up? Check{' '}
         <code>VITE_OLLAMA_URL</code> / Vite proxy.
+        {groqHint ? (
+          <>
+            {' '}
+            <span className="ollama-status__sep">·</span> {groqHint}
+          </>
+        ) : null}
       </aside>
     )
   }
@@ -75,6 +92,12 @@ export default function OllamaStatus() {
       ) : null}
       {warn ? (
         <span className="ollama-status__warn"> — {warn}</span>
+      ) : null}
+      {groqHint ? (
+        <>
+          {' '}
+          <span className="ollama-status__sep">·</span> {groqHint}
+        </>
       ) : null}
     </aside>
   )

@@ -214,6 +214,11 @@
   color: #b45309;
 }
 
+.ollama-status__sep {
+  opacity: 0.65;
+  margin-inline: 4px;
+}
+
 .app-shell {
   text-align: left;
   padding: 0 16px 24px;

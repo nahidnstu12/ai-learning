@@ -4,11 +4,12 @@ import { CHAT_CONSTRAINTS } from '../../lib/chatConstraints'
 import { maybeAssistantContextContentFields } from '../../lib/assistantContextCompress'
 import { clearPipelineLog } from '../../lib/contextPipelineLog'
 import {
-  CHAT_MODEL_STORAGE_KEY,
-  getConfiguredModelIds,
-  readStoredModel,
-} from '../../lib/modelConfig'
-import { streamChat } from '../../lib/ollamaClient'
+  CHAT_ROUTE_STORAGE_KEY,
+  findRoute,
+  getChatRoutes,
+  readStoredRouteId,
+} from '../../lib/llmRegistry'
+import { streamCompletion } from '../../lib/streamCompletion'
 import { SYSTEM_PROMPT } from './systemPrompt'
 import { uid } from './utils'
 
@@ -26,31 +27,40 @@ export function useChatSession() {
   const [lastPipelineReport, setLastPipelineReport] = useState(null)
   const abortRef = useRef(null)
 
-  const modelOptions = useMemo(() => getConfiguredModelIds(), [])
-  const [selectedModel, setSelectedModel] = useState(() =>
-    readStoredModel(modelOptions),
+  const routeOptions = useMemo(() => getChatRoutes(), [])
+  const [selectedRouteId, setSelectedRouteId] = useState(() =>
+    readStoredRouteId(routeOptions),
   )
 
   useEffect(() => {
-    if (modelOptions.includes(selectedModel)) return
-    const next = modelOptions[0]
-    setSelectedModel(next)
+    if (findRoute(routeOptions, selectedRouteId)) return
+    const next = routeOptions[0]?.id
+    if (!next) return
+    setSelectedRouteId(next)
     try {
-      localStorage.setItem(CHAT_MODEL_STORAGE_KEY, next)
+      localStorage.setItem(CHAT_ROUTE_STORAGE_KEY, next)
     } catch {
       /* ignore */
     }
-  }, [modelOptions, selectedModel])
+  }, [routeOptions, selectedRouteId])
 
-  const setModel = useCallback((id) => {
-    if (!modelOptions.includes(id)) return
-    setSelectedModel(id)
-    try {
-      localStorage.setItem(CHAT_MODEL_STORAGE_KEY, id)
-    } catch {
-      /* ignore */
-    }
-  }, [modelOptions])
+  const setRouteId = useCallback(
+    (id) => {
+      if (!findRoute(routeOptions, id)) return
+      setSelectedRouteId(id)
+      try {
+        localStorage.setItem(CHAT_ROUTE_STORAGE_KEY, id)
+      } catch {
+        /* ignore */
+      }
+    },
+    [routeOptions],
+  )
+
+  const selectedRoute = useMemo(
+    () => findRoute(routeOptions, selectedRouteId),
+    [routeOptions, selectedRouteId],
+  )
 
   const apiMessages = useMemo(
     () =>
@@ -88,6 +98,11 @@ export function useChatSession() {
       setError(
         `Message exceeds ${CHAT_CONSTRAINTS.maxUserMessageChars.toLocaleString()} characters (limit from chatConstraints).`,
       )
+      return
+    }
+
+    if (!selectedRoute) {
+      setError('No LLM route configured (check .env).')
       return
     }
 
@@ -131,10 +146,10 @@ export function useChatSession() {
 
     let acc = ''
     try {
-      const { fullText, metrics } = await streamChat({
+      const { fullText, meta } = await streamCompletion({
+        route: selectedRoute,
         messages: payload,
         signal: ac.signal,
-        model: selectedModel,
         onChunk: (chunk) => {
           acc += chunk
           setMessages((prev) =>
@@ -153,14 +168,7 @@ export function useChatSession() {
                 content: fullText,
                 streaming: false,
                 ...maybeAssistantContextContentFields(fullText),
-                meta: {
-                  wallMs: metrics.wallMs,
-                  promptEvalCount: metrics.promptEvalCount,
-                  evalCount: metrics.evalCount,
-                  totalDurationNs: metrics.totalDurationNs,
-                  promptEvalDurationNs: metrics.promptEvalDurationNs,
-                  evalDurationNs: metrics.evalDurationNs,
-                },
+                meta,
               }
             : m,
         ),
@@ -187,7 +195,7 @@ export function useChatSession() {
       abortRef.current = null
       setBusy(false)
     }
-  }, [busy, input, messages, selectedModel])
+  }, [busy, input, messages, selectedRoute])
 
   const stop = useCallback(() => {
     abortRef.current?.abort()
@@ -237,9 +245,9 @@ export function useChatSession() {
   )
 
   return {
-    model: selectedModel,
-    modelOptions,
-    setModel,
+    routeOptions,
+    selectedRouteId,
+    setRouteId,
     apiMessages,
     contextStats,
     visibleMessages,
