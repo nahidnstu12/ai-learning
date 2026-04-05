@@ -527,12 +527,12 @@
 
 .chat__modal {
   width: min(960px, calc(100vw - 32px));
-  max-height: min(92vh, 920px);
+  max-height: min(94vh, 960px);
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 20px 22px;
+  gap: 18px;
+  padding: 22px 26px;
   border-radius: 12px;
   border: 1px solid var(--border);
   background: var(--bg);
@@ -559,8 +559,8 @@
 
 .chat__modal-hint {
   margin: 0;
-  font-size: 12px;
-  line-height: 1.5;
+  font-size: 13px;
+  line-height: 1.55;
   color: var(--text);
   opacity: 0.92;
 }
@@ -596,8 +596,8 @@
 .chat__modal-section {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  min-height: 0;
+  gap: 12px;
+  /* min-height: 0; */
 }
 
 /* Pipeline log: explicit min-height — flex:1 on <ul> was collapsing when the section had no fixed height */
@@ -613,8 +613,8 @@
 
 .chat__modal-section--pipeline-log > .chat__modal-list.chat__modal-list--log {
   flex-shrink: 0;
-  min-height: max(280px, 38vh);
-  max-height: min(62vh, 640px);
+  min-height: max(340px, 44vh);
+  max-height: min(70vh, 760px);
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
@@ -624,12 +624,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 12px;
+  padding-bottom: 2px;
 }
 
 .chat__modal-section h3 {
   margin: 0;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -638,21 +639,21 @@
 
 .chat__modal-pre {
   margin: 0;
-  padding: 10px 12px;
+  padding: 14px 16px;
   border-radius: 8px;
   border: 1px solid var(--border);
   background: var(--social-bg);
   font-family: var(--mono, ui-monospace, monospace);
-  font-size: 11px;
-  line-height: 1.45;
+  font-size: 12px;
+  line-height: 1.5;
   overflow: auto;
-  max-height: min(48vh, 400px);
+  max-height: min(58vh, 560px);
   white-space: pre-wrap;
   word-break: break-word;
 }
 
 .chat__modal-pre--compact {
-  max-height: min(36vh, 300px);
+  max-height: min(46vh, 440px);
 }
 
 .chat__modal-pin {
@@ -664,23 +665,23 @@
 
 /* Fallback when not inside --pipeline-log (shouldn't happen) */
 .chat__modal-list--log {
-  min-height: max(280px, 38vh);
-  max-height: min(62vh, 640px);
+  min-height: max(340px, 44vh);
+  max-height: min(70vh, 760px);
 }
 
 .chat__modal-log-item {
-  padding: 8px 10px;
+  padding: 12px 14px;
 }
 
 .chat__modal-log-body {
-  font-size: 13px;
-  line-height: 1.45;
+  font-size: 14px;
+  line-height: 1.5;
   opacity: 0.92;
 }
 
 .chat__modal-empty {
   margin: 0;
-  font-size: 13px;
+  font-size: 14px;
   opacity: 0.7;
 }
 
@@ -691,14 +692,14 @@
   border: 1px solid var(--border);
   border-radius: 8px;
   overflow-y: auto;
-  max-height: min(52vh, 520px);
+  max-height: min(60vh, 680px);
   background: var(--social-bg);
 }
 
 .chat__modal-msg {
-  padding: 10px 12px;
+  padding: 14px 16px;
   border-bottom: 1px solid var(--border);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .chat__modal-msg:last-child {
@@ -707,13 +708,13 @@
 
 .chat__modal-role {
   display: inline-block;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: 2px 6px;
+  letter-spacing: 0.05em;
+  padding: 4px 8px;
   border-radius: 4px;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   background: var(--bg);
   border: 1px solid var(--border);
 }
@@ -730,5 +731,5 @@
 .chat__modal-msg-body {
   white-space: pre-wrap;
   word-break: break-word;
-  line-height: 1.45;
+  line-height: 1.55;
 }

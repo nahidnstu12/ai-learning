@@ -9,9 +9,9 @@ function groqSetupHint() {
   const groqModel = getGroqModelId()
   if (!groqModel) return null
   if (groqUsesDevProxy()) {
-    return 'Groq: dev proxy `/groq` — set GROQ_API_KEY or VITE_GROQ_API_KEY in .env (read by Vite only, not bundled).'
+    return 'Groq: dev proxy `/groq`'
   }
-  return 'Groq: direct `VITE_GROQ_BASE_URL` — use `VITE_GROQ_API_KEY` (embedded in client; dev/trusted only).'
+  return 'Groq: direct `VITE_GROQ_BASE_URL` — use `GROQ_API_KEY` (embedded in client; dev/trusted only).'
 }
 
 export default function OllamaStatus() {

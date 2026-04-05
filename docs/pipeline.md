@@ -1,42 +1,42 @@
 {
-  "runId": "1775125963120-fn7eotx",
-  "ts": 1775125963121,
+  "runId": "1775193153896-md1gluh",
+  "ts": 1775193153896,
   "stages": {
     "pin": {
-      "pinnedMessageIds": [],
-      "pinnedCount": 0
+      "pinnedMessageIds": [
+        "4ce29522-3a08-47c0-ab0d-4c2d24451f2b"
+      ],
+      "pinnedCount": 1
     },
     "turns": {
       "rawTurnCount": 4,
-      "keptTurnCount": 1
+      "keptTurnCount": 3
     },
     "compression": {
       "assistantsEligibleInline": 0,
       "note": "Stored contextContent preferred; else inline heuristic over assistantContextCompressMinChars"
     },
     "tokens": {
-      "budget": 512,
-      "estimatedBeforeEviction": 1139,
-      "estimatedAfter": 158
+      "budget": 1024,
+      "estimatedBeforeEviction": 1103,
+      "estimatedAfter": 819
     },
     "eviction": {
       "removedTurnIds": [
-        "35326a7e-fd07-454c-8639-e173e11d71cd",
-        "94a8c4f0-4780-4180-a7a0-8a1f1bd3221b",
-        "04a32ce9-a11f-450b-ba57-e19238b81288"
+        "87f08c80-81c1-4a32-aeb8-d6147797fd58"
       ],
-      "rounds": 3
+      "rounds": 1
     },
     "summary": {
       "status": "skipped",
-      "reason": "Phase 3 rolling summary not implemented"
+      "reason": "Phase 3 auto rolling summary not implemented"
     },
     "warnings": []
   },
   "final": {
-    "ollamaMessageCount": 2,
+    "ollamaMessageCount": 6,
     "clipped": true,
     "rawTurnCount": 4,
-    "keptTurnCount": 1
+    "keptTurnCount": 3
   }
 }
