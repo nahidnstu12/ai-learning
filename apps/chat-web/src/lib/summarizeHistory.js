@@ -6,11 +6,12 @@ import { streamCompletion } from './streamCompletion'
  * @typedef {{ id?: string; role: string; content: string; pinned?: boolean; contextContent?: string }} InternalRow
  */
 
-const SUMMARY_SYSTEM = `You compress chat transcripts into a single dense summary for another LLM that will continue the conversation.
+const SUMMARY_SYSTEM = `You compress chat transcripts into a single dense summary for another LLM with a small context window.
 Rules:
-- Preserve facts: names, numbers, decisions, constraints, tool results, code intent (not full code unless short).
-- Keep open questions and unresolved items explicit.
-- Use clear bullets or short paragraphs. No preamble or "Here is a summary".`
+- Be ruthlessly short: 5–12 bullet lines max unless the transcript is huge; no paragraphs of prose.
+- Preserve facts: names, numbers, decisions, constraints, tool results, code intent (not full code unless ≤5 lines).
+- Keep open questions and unresolved items explicit as a final bullet.
+- No preamble or "Here is a summary".`
 
 function turnPinned(t) {
   return !!(t.user?.pinned || t.assistant?.pinned)

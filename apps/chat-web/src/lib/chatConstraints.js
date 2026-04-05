@@ -7,7 +7,7 @@
  * | maxUserMessageChars  | Chat.jsx       | Blocks send; `maxLength` on textarea |
  * | maxContextTokenBudget| buildApiPayload | Est. token budget + scored turn eviction |
  * | maxContextChars      | (legacy / fallback) | Still exported; pipeline prefers tokens |
- * | maxReplyTokens       | ollamaClient.js| `options.num_predict` ceiling |
+ * | maxReplyTokens       | ollamaClient.js + groqClient | `VITE_CHAT_MAX_REPLY_TOKENS` (main reply cap) |
  * | summaryMaxReplyTokens| summarizeHistory.js + streamCompletion | `VITE_SUMMARY_NUM_PREDICT` (summarizer only) |
  * | temperatureMax, etc. | ollamaClient.js| Clamps env sampling so it can’t exceed these |
  *
@@ -30,12 +30,21 @@ function resolveSummaryMaxReplyTokens() {
   return Math.min(n, 8192)
 }
 
+/** Main chat completion cap (Groq `max_tokens`, Ollama `num_predict` upper bound). Shorter = crisper answers in practice. */
+function resolveMaxReplyTokens() {
+  const raw = import.meta.env.VITE_CHAT_MAX_REPLY_TOKENS
+  if (raw === undefined || raw === '') return 512
+  const n = Number.parseInt(String(raw), 10)
+  if (!Number.isFinite(n) || n < 64) return 512
+  return Math.min(n, 8192)
+}
+
 export const CHAT_CONSTRAINTS = {
   maxUserMessageChars: 12_000,
   maxContextChars: 48_000,
   /** Est. prompt token budget for `buildApiPayload` (chars÷4 heuristic). Override with `VITE_CONTEXT_TOKEN_BUDGET`. */
   maxContextTokenBudget: resolveContextTokenBudget(),
-  maxReplyTokens: 512,
+  maxReplyTokens: resolveMaxReplyTokens(),
   /** Max new tokens for the history summarizer call (`streamCompletion` override). */
   summaryMaxReplyTokens: resolveSummaryMaxReplyTokens(),
   /** Assistant replies longer than this get a smaller `contextContent` for API packing. */
