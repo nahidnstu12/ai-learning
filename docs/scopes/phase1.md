@@ -77,7 +77,7 @@ Use this as a **progress ladder**, not a day-by-day script.
 | 4   | **Multi-turn** history in memory                    | user/assistant alternation resend                               |
 | 5   | **System prompt** + optional slash/config commands  | persona + parameters as data, not magic                         |
 | 6   | **chat-cli** (or equivalent) — thin REPL            | one place combining 2–5                                         |
-| 7   | Optional **chat-web** — same API, browser UX        | session state, stop, visibility into payload (see extras below) |
+| 7   | Optional **chat-web** — same API, browser UX        | session state, stop, visibility into payload — [chat-web.md](../output/chat-web.md) |
 
 
 ---
@@ -86,7 +86,8 @@ Use this as a **progress ladder**, not a day-by-day script.
 
 ### Baseline (original scope)
 
-- **chat-cli** — minimal Node client: multi-turn chat, streaming, model name from env, dependency on Ollama only.
+- **chat-cli** — minimal Node client: multi-turn chat, streaming, model name from env, dependency on Ollama only. **→** [chat-cli.md](../output/chat-cli.md) (runbook, env table, flow vs Phase 1 themes).
+- **chat-web** — Vite + React optional extra: routes, context pipeline, Stop, Groq proxy. **→** [chat-web.md](../output/chat-web.md).
 - Concepts: tokens, context limits, system prompt, sampling, no persistence required beyond the session.
 
 ### Extras added in this repo (beyond the thin CLI lesson)

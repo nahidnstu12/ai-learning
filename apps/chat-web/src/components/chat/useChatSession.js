@@ -152,7 +152,9 @@ export function useChatSession() {
       })
       const { system, pinnedRows, unpinnedTranscript } =
         analyzeHistoryForSummary(internalMessages)
-      const overBudget = dry.meta.estTokensBefore > dry.meta.budget
+      // Use post-eviction estimate: estTokensBefore is pre-loop only (full history).
+      // Otherwise any long thread re-summarizes every send even when dry.messages already fits budget.
+      const overBudget = dry.meta.estTokensAfter > dry.meta.budget
 
       if (overBudget && unpinnedTranscript) {
         try {
