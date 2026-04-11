@@ -26,16 +26,36 @@ const maxMessages = Math.min(
 const app = express()
 app.set('trust proxy', 1)
 
-const origins = process.env.ALLOWED_ORIGINS?.split(',')
-  .map((s) => s.trim())
-  .filter(Boolean)
+const originsRaw = process.env.ALLOWED_ORIGINS?.trim() ?? ''
+/** Unset, `*`, or `all` → any origin (reflects request Origin). Else comma-separated allowlist. */
+const corsAllowAll =
+  !originsRaw || originsRaw === '*' || originsRaw.toLowerCase() === 'all'
+const origins = corsAllowAll
+  ? []
+  : originsRaw.split(',').map((s) => s.trim().replace(/\/$/, '')).filter(Boolean)
+
+if (process.env.DEBUG_CORS === '1') {
+  console.info(
+    '[groq-proxy] CORS:',
+    corsAllowAll || origins.length === 0 ? 'allow all origins' : origins,
+  )
+}
+
 app.use(
   cors({
-    origin: origins?.length ? origins : true,
+    origin: corsAllowAll || origins.length === 0 ? true : origins,
     methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    optionsSuccessStatus: 204,
   }),
 )
+
+app.use((req, _res, next) => {
+  if (process.env.DEBUG_CORS === '1' && (req.method === 'POST' || req.method === 'OPTIONS')) {
+    console.info('[groq-proxy]', req.method, req.path, 'Origin:', req.headers.origin ?? '(none)')
+  }
+  next()
+})
 
 app.use(express.json({ limit: 512 * 1024 }))
 
