@@ -11,7 +11,10 @@ function groqSetupHint() {
   if (groqUsesDevProxy()) {
     return 'Groq: dev proxy `/groq`'
   }
-  return 'Groq: direct `VITE_GROQ_BASE_URL` — use `GROQ_API_KEY` (embedded in client; dev/trusted only).'
+  if (import.meta.env.VITE_GROQ_API_KEY?.trim()) {
+    return 'Groq: direct `VITE_GROQ_BASE_URL` + bundled key (trusted only)'
+  }
+  return 'Groq: `VITE_GROQ_BASE_URL` (server proxy; no client key)'
 }
 
 export default function OllamaStatus() {
