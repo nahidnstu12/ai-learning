@@ -43,7 +43,7 @@ if (process.env.DEBUG_CORS === '1') {
 
 app.use(
   cors({
-    origin: corsAllowAll || origins.length === 0 ? true : origins,
+    origin: 'https://interview-chat.bynarilab.com',
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     optionsSuccessStatus: 204,
