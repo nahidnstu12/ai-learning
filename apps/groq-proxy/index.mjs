@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import cors from 'cors'
+
 import express from 'express'
 import rateLimit from 'express-rate-limit'
 import { Readable } from 'node:stream'
@@ -26,31 +26,22 @@ const maxMessages = Math.min(
 const app = express()
 app.set('trust proxy', 1)
 
-const originsRaw = process.env.ALLOWED_ORIGINS?.trim() ?? ''
-/** Unset, `*`, or `all` → any origin (reflects request Origin). Else comma-separated allowlist. */
-const corsAllowAll =
-  !originsRaw || originsRaw === '*' || originsRaw.toLowerCase() === 'all'
-const origins = corsAllowAll
-  ? []
-  : originsRaw.split(',').map((s) => s.trim().replace(/\/$/, '')).filter(Boolean)
+const allowedOrigin = 'https://interview-chat.bynarilab.com'
 
-if (process.env.DEBUG_CORS === '1') {
-  console.info(
-    '[groq-proxy] CORS:',
-    corsAllowAll || origins.length === 0 ? 'allow all origins' : origins,
-  )
-}
+// Handle preflight explicitly before any other middleware
+app.options('*', (req, res) => {
+  res.set('Access-Control-Allow-Origin', allowedOrigin)
+  res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+  res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  res.set('Access-Control-Max-Age', '86400')
+  res.status(204).end()
+})
 
-app.use(
-  cors({
-    origin: 'https://interview-chat.bynarilab.com',
-    methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    optionsSuccessStatus: 204,
-  }),
-)
-
-app.use((req, _res, next) => {
+// Set CORS headers on every response
+app.use((req, res, next) => {
+  res.set('Access-Control-Allow-Origin', allowedOrigin)
+  res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+  res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
   if (process.env.DEBUG_CORS === '1' && (req.method === 'POST' || req.method === 'OPTIONS')) {
     console.info('[groq-proxy]', req.method, req.path, 'Origin:', req.headers.origin ?? '(none)')
   }
