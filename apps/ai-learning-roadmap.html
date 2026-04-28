@@ -347,6 +347,53 @@
     margin-top: 20px;
   }
 
+  /* Phase 2 (and similar): six-pack grid, tighter rhythm */
+  .topics-grid--tight {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  @media (max-width: 960px) {
+    .topics-grid--tight {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 520px) {
+    .topics-grid--tight {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .phase-compact-grid .topic-card {
+    padding: 14px 14px 14px 16px;
+  }
+
+  .phase-compact-grid .topic-title {
+    font-size: 13px;
+    letter-spacing: -0.01em;
+  }
+
+  .phase-compact-grid .topic-tags {
+    margin-top: 8px;
+  }
+
+  .phase-project--slim {
+    margin-top: 14px;
+    padding: 14px 18px 16px;
+    gap: 12px;
+  }
+
+  .phase-project--slim .project-icon {
+    font-size: 20px;
+  }
+
+  .phase-project--slim .project-desc {
+    line-height: 1.55;
+    max-width: 48rem;
+  }
+
   .topic-card {
     background: linear-gradient(180deg, var(--surface) 0%, var(--surface-elevated) 100%);
     border: 1px solid var(--border);
@@ -752,49 +799,59 @@
 
     <div class="timeline-connector">↓</div>
 
-    <!-- PHASE 2 -->
-    <div class="phase" style="--phase-color: #7fd4ff">
+    <!-- PHASE 2 — docs/scopes/phase2.md -->
+    <div class="phase phase-compact-grid" style="--phase-color: #7fd4ff">
       <div class="phase-header" onclick="togglePhase(this)" role="button" tabindex="0" aria-expanded="false">
         <span class="phase-num">02</span>
         <div class="phase-meta">
-          <span class="phase-name">LLM Fundamentals</span>
-          <span class="phase-desc">Embeddings, RAG, vector search</span>
+          <span class="phase-name">Phase 2 — Embeddings, pgvector &amp; RAG</span>
+          <span class="phase-desc">Meaning as math in Postgres · retrieve, then generate · cite sources, refuse when nothing relevant</span>
         </div>
         <div class="phase-right">
-          <span class="duration-badge">Week 3–5</span>
+          <span class="duration-badge">~3 wk</span>
           <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
         </div>
       </div>
       <div class="phase-body">
         <div class="phase-body-inner">
-        <div class="topics-grid">
+        <div class="topics-grid topics-grid--tight">
           <div class="topic-card">
-            <div class="topic-title">Embeddings</div>
-            <div class="topic-detail">Convert text → vectors. Use nomic-embed-text model. Cosine similarity in JS.</div>
-            <div class="topic-tags"><span class="tag">embeddings</span><span class="tag">vectors</span><span class="tag">similarity</span></div>
+            <div class="topic-title">Vectors from text</div>
+            <div class="topic-detail">Embedding model on the same Ollama host; cosine similarity in JS; small in-memory search before you lean on the database.</div>
+            <div class="topic-tags"><span class="tag">embeddings</span><span class="tag">similarity</span></div>
           </div>
           <div class="topic-card">
-            <div class="topic-title">Vector Databases</div>
-            <div class="topic-detail">Chroma or Qdrant via Docker. Store & search document embeddings. HNSW index concepts.</div>
-            <div class="topic-tags"><span class="tag">chromadb</span><span class="tag">qdrant</span><span class="tag">ANN</span></div>
+            <div class="topic-title">Chunking &amp; load</div>
+            <div class="topic-detail">Splits that respect paragraphs, overlap at edges, throttled parallel embeds; upserts and clean re-ingest.</div>
+            <div class="topic-tags"><span class="tag">chunking</span><span class="tag">ingest</span></div>
           </div>
           <div class="topic-card">
-            <div class="topic-title">RAG Pipeline</div>
-            <div class="topic-detail">Retrieval-Augmented Generation. Chunk docs → embed → store → retrieve → prompt. Build from scratch.</div>
-            <div class="topic-tags"><span class="tag">RAG</span><span class="tag">chunking</span><span class="tag">retrieval</span></div>
+            <div class="topic-title">Postgres + pgvector</div>
+            <div class="topic-detail">Chunks and embeddings live beside ordinary rows—filters, joins, and ANN in one place instead of a separate vector silo.</div>
+            <div class="topic-tags"><span class="tag">pgvector</span><span class="tag">SQL</span></div>
           </div>
           <div class="topic-card">
-            <div class="topic-title">LangChain.js Basics</div>
-            <div class="topic-detail">Document loaders, text splitters, chains. Use with local Ollama instead of OpenAI.</div>
-            <div class="topic-tags"><span class="tag">langchain</span><span class="tag">chains</span><span class="tag">loaders</span></div>
+            <div class="topic-title">Indexes &amp; retrieval</div>
+            <div class="topic-detail">HNSW after bulk load; order by distance, similarity floor, explain plans and recall-vs-speed tuning. Optional: mix in keyword search when exact codes or labels matter.</div>
+            <div class="topic-tags"><span class="tag">HNSW</span><span class="tag">hybrid</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">RAG that behaves</div>
+            <div class="topic-detail">Labeled context blocks, streaming answers like Phase 1, citations on the way out—<strong>no retrieval → no guessing</strong>.</div>
+            <div class="topic-tags"><span class="tag">RAG</span><span class="tag">guardrails</span></div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-title">LangChain.js</div>
+            <div class="topic-detail">Ollama embeddings plus a Postgres-backed vector store, retrievers, and RAG-shaped chains—good acceleration once your raw-SQL retrieval path is solid. Keep mental model aligned with what the framework is hiding.</div>
+            <div class="topic-tags"><span class="tag">langchain</span><span class="tag">pgvector</span></div>
           </div>
         </div>
-        <div class="phase-project">
+        <div class="phase-project phase-project--slim">
           <span class="project-icon">📄</span>
           <div>
-            <div class="project-label">Phase Project</div>
-            <div class="project-name">PDF Q&A Bot</div>
-            <div class="project-desc">Upload any PDF → chunk → embed → store in Chroma → ask questions, get answers with source citations.</div>
+            <div class="project-label">Phase 2 — what we ship</div>
+            <div class="project-name">Corpus Q&amp;A (PDFs or text)</div>
+            <div class="project-desc">End-to-end: ingest → store in Postgres → ask → streamed reply with source pointers. APIs for upload, listing, delete; chat UI; similarity floor so off-topic questions get a straight “not in the docs.” Detail and checkpoints in the Phase 2 scope doc.</div>
           </div>
         </div>
         </div>
@@ -1025,7 +1082,7 @@
         <div class="docker-icon">🐳</div>
         <div>
           <div class="docker-title">Quick Start Stack</div>
-          <div class="docker-sub">docker-compose.yml — Ollama + Chroma + your Node app</div>
+          <div class="docker-sub">docker-compose.yml — Ollama + Postgres (pgvector) + your Node app</div>
         </div>
       </div>
       <div class="docker-body">
@@ -1038,20 +1095,26 @@
     ports: [<span class="str">"11434:11434"</span>]
     volumes: [<span class="str">ollama_data:/root/.ollama</span>]
 
-  chromadb:
-    image: <span class="str">chromadb/chroma</span>
-    ports: [<span class="str">"8000:8000"</span>]
+  postgres:
+    image: <span class="str">pgvector/pgvector:pg16</span>
+    ports: [<span class="str">"5432:5432"</span>]
+    environment:
+      POSTGRES_USER: <span class="str">ai_user</span>
+      POSTGRES_PASSWORD: <span class="str">ai_pass</span>
+      POSTGRES_DB: <span class="str">ai_learning</span>
+    volumes: [<span class="str">pg_data:/var/lib/postgresql/data</span>]
 
   app:
     build: <span class="str">.</span>
     ports: [<span class="str">"3000:3000"</span>]
     environment:
-      - <span class="str">OLLAMA_BASE_URL=http://ollama:11434</span>
-      - <span class="str">CHROMA_URL=http://chromadb:8000</span>
-    depends_on: [ollama, chromadb]
+      - <span class="str">OLLAMA_URL=http://ollama:11434</span>
+      - <span class="str">DATABASE_URL=postgresql://ai_user:ai_pass@postgres:5432/ai_learning</span>
+    depends_on: [ollama, postgres]
 
 <span class="cmd">volumes:</span>
   ollama_data:
+  pg_data:
         </div>
 
         <div class="code-block">
@@ -1092,9 +1155,9 @@
             <td class="purpose">Run llama3, mistral, phi3 locally. OpenAI-compatible API.</td>
           </tr>
           <tr>
-            <td>Vector DB</td>
-            <td class="mono">ChromaDB / Qdrant</td>
-            <td class="purpose">Store embeddings. JS client libs available for both.</td>
+            <td>Vector search</td>
+            <td class="mono">PostgreSQL + pgvector</td>
+            <td class="purpose">Embeddings as a column; ANN indexes + relational filters in one SQL database.</td>
           </tr>
           <tr>
             <td>AI Framework</td>
