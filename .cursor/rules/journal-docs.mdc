@@ -1,0 +1,63 @@
+---
+description: Banglish tutorial tone and structure for learning journal markdown (Docusaurus)
+globs: apps/docs/docs/journal/**/*.md,apps/docs/**/*.md
+alwaysApply: false
+---
+# Journal doc writing (AI instructions)
+
+When creating or editing files under `apps/docs/docs/journal/`, follow this guide.
+
+## Purpose
+
+Standalone learning pages: what was built, how it works, in the author's words. Each page reads alone — **no links** to other site sections or journal pages. Mention follow-up topics by title only.
+
+## Language & tone
+
+- **Banglish**: Bangla explanations; English for technical terms (CORS, proxy, `fetch`, token, stream, env, API, component names).
+- **Tutorial / module voice**: direct, factual, structured — like a course section.
+- **Avoid**: diary or confession tone, dramatic arcs (“মনে হয়েছিল… আসলে…”), “ধাক্কা” storytelling, hype, filler (“In this article we will explore”, “It is important to note”, long conclusions that repeat the intro).
+- **Avoid**: English-only unless the user asks.
+
+## Structure
+
+1. **Title** — `# <topic>` (clear, includes English term when useful).
+2. **Intro** — 2–4 sentences: what this page covers + prerequisites (tools, running app) only.
+3. **Numbered sections** — `## ১.` / `## ২.` or `## 1.` / `## 2.` (pick one style per doc).
+4. **Use when they teach** (not mandatory every page):
+   - Table (states, config keys, component roles)
+   - One short analogy (max one paragraph)
+   - Minimal code/config from the repo
+   - Example output (UI string, request path, terminal snippet)
+5. **End** — one `> [!TIP]` or `> [!NOTE]` with a practical rule; optional **Boundary** line: what this page does *not* cover.
+
+Keep paragraphs short (2–4 lines). Optional section emojis (`## 💻`) only if the series already uses them.
+
+## Scope & depth
+
+- **One topic per page.** Do not bundle unrelated subjects.
+- **Repo-grounded**: real paths, env vars, functions from `apps/chat-web` (or the app named in the task). Do not invent features; note unused env vars briefly if relevant.
+- **Shallow by default** — only go deep when the user asks. Skip production hardening, full API reference, and unrelated providers unless the page title requires them.
+
+## Technical habits
+
+- Separate **CLI/Node** (direct URL, no CORS) vs **browser** (same-origin, dev proxy) when relevant.
+- Name concrete artifacts: e.g. `VITE_OLLAMA_URL`, `vite.config.js`, `OllamaStatus`, `checkOllamaHealth`.
+- Docusaurus front matter when needed: `sidebar_position`, `title`.
+
+## Voice checklist (before finishing)
+
+- [ ] Reads as a textbook section, not a personal blog rant
+- [ ] No first-person drama unless the user explicitly requests narrative style
+- [ ] At least one concrete example (config, path, or UI text)
+- [ ] Boundary stated if the topic could bleed into neighbors (streaming, context, RAG, etc.)
+
+## Anti-patterns
+
+- Wall of bullets with no prose
+- Repeating the same point in intro, body, and tip
+- Long essay for a narrow topic (e.g. proxy + status = one page, not five)
+- Cross-links or “see also” URLs to other docs
+
+## When the user gives a topic
+
+Confirm or produce: title, numbered outline, draft depth (outline vs full), **out of scope** list, and source files in the repo to cite.
