@@ -1,9 +1,17 @@
 # ai-learning-docs (Docusaurus)
 
-Content is sourced from the repo root [`../../docs`](../../docs) (scopes, output, notes). The sidebar lists Phase 1 / 2 only for now; everything else is still reachable via links.
+Published site content lives **inside this app** (`apps/docs/docs/`, `apps/docs/ai-notes/`).
+
+Repo-root [`docs/`](../../docs) is **internal only** (runbooks, pipeline, notes) — not mapped into Docusaurus.
+
+| Section | Path | Purpose |
+|--------|------|---------|
+| Roadmap | `docs/scopes/` | Phase summaries & checkpoints |
+| Journal | `docs/journal/` | Standalone phase write-ups (no cross-links) |
+| AI Notes | `ai-notes/` | Books, courses, external learning (blog) |
 
 ```bash
 npm install
-npm start          # http://localhost:3000
+npm start          # http://localhost:3004
 npm run build      # static site → build/
 ```

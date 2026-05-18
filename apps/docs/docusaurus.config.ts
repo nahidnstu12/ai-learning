@@ -4,7 +4,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'AI Learning',
-  tagline: 'Scopes, phases, and runbooks',
+  tagline: 'Roadmap, journal, and AI notes',
   favicon: 'img/favicon.ico',
 
   future: {
@@ -26,9 +26,6 @@ const config: Config = {
       'classic',
       {
         docs: {
-          path: '../../docs',
-          /** `pipeline.md` is JSON sample, not MDX-safe */
-          exclude: ['**/pipeline.md'],
           sidebarPath: './sidebars.ts',
           editUrl: undefined,
         },
@@ -37,6 +34,21 @@ const config: Config = {
           customCss: './src/css/custom.css',
         },
       } satisfies Preset.Options,
+    ],
+  ],
+
+  plugins: [
+    [
+      '@docusaurus/plugin-content-blog',
+      {
+        id: 'ai-notes',
+        routeBasePath: 'ai-notes',
+        path: 'ai-notes',
+        blogTitle: 'AI Notes',
+        blogDescription: 'Books, courses, and external learning',
+        postsPerPage: 10,
+        showReadingTime: true,
+      },
     ],
   ],
 
@@ -54,10 +66,17 @@ const config: Config = {
       items: [
         {
           type: 'docSidebar',
-          sidebarId: 'learningSidebar',
+          sidebarId: 'scopesSidebar',
           position: 'left',
-          label: 'Docs',
+          label: 'Roadmap',
         },
+        {
+          type: 'docSidebar',
+          sidebarId: 'journalSidebar',
+          position: 'left',
+          label: 'Journal',
+        },
+        {to: '/ai-notes', label: 'AI Notes', position: 'left'},
       ],
     },
     footer: {

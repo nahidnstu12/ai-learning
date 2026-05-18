@@ -16,7 +16,8 @@ ai-learning/
 ├── notebooks/             # optional Jupyter
 ├── data/raw|processed/    # datasets (heavy stuff gitignored)
 ├── prompts/               # versioned system / few-shot text
-└── docs/notes.md          # what worked, params, models
+├── docs/                  # internal runbooks & notes (not the public site)
+└── apps/docs/             # Docusaurus site (roadmap, journal, AI notes)
 ```
 
 ## Learning path (order)
